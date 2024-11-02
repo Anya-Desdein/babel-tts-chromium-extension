@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }else {
             chrome.storage.local.set({ babel_tts_apiKey: apiKey }, function() {
                 apiKeyStatusMessage.textContent = 'API Key saved successfully!';
+
+                setTimeout(() => {
+                    window.location.href = 'tts_home.html';
+                }, 1000); // Delay to show the success message briefly
             });
         }
     });
