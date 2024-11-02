@@ -1,6 +1,25 @@
 function getValueFromLocalStorage(value, callback) {
     chrome.storage.local.get(value, function(result) {
-        callback( JSON.stringify(result[value]) || `${result} not found`);
+        callback( JSON.stringify(result[value]) || false);
+    });
+}
+
+function saveSettings(key, value) {
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.set({ [key]: value }, function()  {
+            if (chrome.runtime.lastError) {
+                reject(new Error(`Failed to save to ${key}`));
+            } else {
+                getValueFromLocalStorage(key, function(result) {
+                    if (!result) {
+                        pickVoiceStatusMessage.textContent = 'Something went wrong. No key in the local storage.';
+                    }else {
+                        pickVoiceStatusMessage.textContent = `Result saved, ${result}`;
+                    }
+                });
+                resolve('Saved successfully');
+            }
+        });
     });
 }
 
@@ -45,7 +64,6 @@ function rerouteToSettings() {
 
 async function sendRequestToOpenai(text, apiKey, voiceName) {
     try {
-        apiKey = apiKey.replace(/^['"]|['"]$/g, '');
         voiceName = voiceName.replace(/^['"]|['"]$/g, '');
         console.log(`${text}, ${apiKey}, ${voiceName}.`);
 
@@ -93,7 +111,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!apiKey) {
             window.location.href = 'set_api_key.html';
         }else {
+            apiKey = apiKey.replace(/^['"]|['"]$/g, '');
+            ttsInputStatusMessage.textContent = `${apiKey} tts_home.html`;
             getValueFromLocalStorage("babel_tts_openai_voice_name", function(voiceName) {
+                if (!voiceName) {
+                    saveSettings('babel_tts_openai_voice_name', 'onyx');
+                    voiceName = 'onyx'; 
+                }
                 rerouteToSettings()
                 ttsService(apiKey, voiceName);
             });

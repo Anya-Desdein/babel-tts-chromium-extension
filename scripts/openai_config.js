@@ -1,6 +1,6 @@
 function getValueFromLocalStorage(value, callback) {
     chrome.storage.local.get(value, function(result) {
-        callback( JSON.stringify(result[value]) || `${result} not found`);
+        callback( JSON.stringify(result[value]) || false);
     });
 }
 
