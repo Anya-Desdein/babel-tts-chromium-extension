@@ -1,41 +1,27 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const apiKeySaveButton = document.getElementById('apiKeySaveButton');
-    const apiKeyInput = document.getElementById('apiKeyInput');
-    const apiKeyStatusMessage = document.getElementById('apiKeyStatusMessage');
-    
-    apiKeySaveButton.addEventListener('click', function() {
-        const apiKey = apiKeyInput.value;
-        if (!apiKey.length) {
-            apiKeyStatusMessage.textContent = 'No input detected. OpenAI API key is a very long string starting with "sk-". \n Try with that one next time.';
-        }else if ((!apiKey.startsWith("sk-")) || (apiKey.length < 5)) {
-            apiKeyStatusMessage.textContent = 'This is not an API Key :< . OpenAI API key is a very long string starting with "sk-". \n Try with that one next time.';
-        }else {
-            chrome.storage.local.set({ babel_tts_apiKey: apiKey }, function() {
-                apiKeyStatusMessage.textContent = 'API Key saved successfully!';
-
-                setTimeout(() => {
-                    window.location.href = 'tts_home.html';
-                }, 1000); // Delay to show the success message briefly
-            });
+function getApiKey(callback) {
+    chrome.storage.local.get('babel_tts_apiKey', function(result) {
+        if (result.babel_tts_apiKey) {
+            callback(result.babel_tts_apiKey);
+        } else {
+            callback('API Key not found');
         }
     });
+}
 
+document.addEventListener('DOMContentLoaded', function() {
+    const ttsInputSaveButton = document.getElementById('ttsInputSaveButton');
+    const ttsInput = document.getElementById('ttsInput');
+    const ttsInputStatusMessage = document.getElementById('ttsInputStatusMessage');
     
-    // Function to retrieve the API key
-    function getApiKey(callback) {
-        chrome.storage.local.get('babel_tts_apiKey', function(result) {
-            if (result.babel_tts_apiKey) {
-                callback(result.babel_tts_apiKey);
-            } else {
-                console.log('API Key not found');
-            }
-        });
-    }
-    
-    // Example usage of getApiKey function
-    getApiKey(function(babel_tts_apiKey) {
-        console.log('Retrieved API Key:', babel_tts_apiKey);
-        // You can use the apiKey here for any additional logic or API calls
+    ttsInputSaveButton.addEventListener('click', function() {
+        const ttsText = ttsInput.value;
+        if (!ttsText.length) {
+            apiKeyStatusMessage.textContent = 'No input detected.';
+        }else {
+            getApiKey(function(babel_tts_apiKey) {
+                ttsInputStatusMessage.textContent = babel_tts_apiKey;
+            });
+        }
     });
 });
 
