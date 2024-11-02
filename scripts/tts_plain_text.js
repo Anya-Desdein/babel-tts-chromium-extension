@@ -3,6 +3,7 @@ function getValueFromLocalStorage(value, callback) {
         callback( JSON.stringify(result[value]) || `${result} not found`);
     });
 }
+
 function saveFormData(text) {
     return new Promise((resolve, reject) => {
         chrome.storage.local.set({ babel_tts_plain_text: text }, function()  {
@@ -15,7 +16,7 @@ function saveFormData(text) {
     });
 }
 
-function ttsService(apiKey) {
+function ttsService(apiKey, voiceName) {
     const ttsInputSaveButton = document.getElementById('ttsInputSaveButton');
     const ttsInput = document.getElementById('ttsInput');
     const ttsInputStatusMessage = document.getElementById('ttsInputStatusMessage');
@@ -29,7 +30,7 @@ function ttsService(apiKey) {
             saveFormData(ttsText)
                 .then((return_value) => {
                     ttsInputStatusMessage.textContent = return_value;
-                    sendRequestToOpenai(ttsText, apiKey);
+                    sendRequestToOpenai(ttsText, apiKey, voiceName);
                 });
         }
     });
@@ -42,8 +43,17 @@ function rerouteToSettings() {
     });
 }
 
-async function sendRequestToOpenai(text, apiKey) {
+async function sendRequestToOpenai(text, apiKey, voiceName) {
     try {
+        apiKey = apiKey.replace(/^['"]|['"]$/g, '');
+        voiceName = voiceName.replace(/^['"]|['"]$/g, '');
+        console.log(`${text}, ${apiKey}, ${voiceName}.`);
+
+        let stringified_text = String(text);
+        stringified_text = stringified_text.replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g , '_').slice(0, 22) + ".mp3";
+        stringified_text = stringified_text.length <= 7 ? "output.mp3" : stringified_text;
+        console.log(`${stringified_text}`);
+
         const response = await fetch("https://api.openai.com/v1/audio/speech", {
             method: "POST",
             headers: {
@@ -52,7 +62,7 @@ async function sendRequestToOpenai(text, apiKey) {
             },
             body: JSON.stringify({
                 model: "tts-1",
-                voice: "onyx",
+                voice: voiceName,
                 input: text
             })
         })
@@ -61,7 +71,7 @@ async function sendRequestToOpenai(text, apiKey) {
         }else {
             const blob = await response.blob()
             const saveFileHandle = await window.showSaveFilePicker({
-                suggestedName: "output.mp3",
+                suggestedName: stringified_text,
                 types: [{
                     description: "Audio Files",
                     accept: { "audio/mpeg": [".mp3"] }
@@ -70,11 +80,11 @@ async function sendRequestToOpenai(text, apiKey) {
             const writableStream = await saveFileHandle.createWritable();
             await writableStream.write(blob);
             await writableStream.close()
-            document.getElementById("statusMessage").textContent = "Saved to a file.";
+            document.getElementById("ttsInputStatusMessage").textContent = "Saved to a file.";
         }
     } catch (error) {
         console.error("Error generating TTS:", error);
-        document.getElementById("statusMessage").textContent = `Failed to generate. Error: ${error}`;
+        document.getElementById("ttsInputStatusMessage").textContent = `Failed to generate. Error: ${error}`;
     }
 }
 
@@ -83,9 +93,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!apiKey) {
             window.location.href = 'set_api_key.html';
         }else {
-            ttsInputStatusMessage.textContent = `${apiKey} tts_home.html`;
-            rerouteToSettings()
-            ttsService(apiKey);
+            getValueFromLocalStorage("babel_tts_openai_voice_name", function(voiceName) {
+                rerouteToSettings()
+                ttsService(apiKey, voiceName);
+            });
         }
     });
 });
