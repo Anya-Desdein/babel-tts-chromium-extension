@@ -6,7 +6,7 @@
   "permissions": ["storage"],
   "action": {
     "default_popup": "main.html",
-    "default_icon": "logo.png"
+    "default_icon": "temp_logo.png"
   },
   "background": {
     "service_worker": "./scripts/background.js",
