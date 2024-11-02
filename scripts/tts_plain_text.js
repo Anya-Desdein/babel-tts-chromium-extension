@@ -1,30 +1,72 @@
-function getApiKey(callback) {
-    chrome.storage.local.get('babel_tts_apiKey', function(result) {
-        if (result.babel_tts_apiKey) {
-            callback(result.babel_tts_apiKey);
+function getValueFromLocalStorage(callback) {
+    chrome.storage.local.get(function(result) {
+        callback(result.babel_tts_apiKey || `${value} not found`);
+    });
+}
+
+function saveFormData(text) {
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.set({ babel_tts_plain_text: text }, function()  {
+            if (chrome.runtime.lastError) {
+                reject(new Error('Failed to save data'));
+            } else {
+                resolve('Data saved successfully');
+            }
+        });
+    });
+}
+
+function tts_service(apiKey) {
+    const ttsInputSaveButton = document.getElementById('ttsInputSaveButton');
+    const ttsInput = document.getElementById('ttsInput');
+    const ttsInputStatusMessage = document.getElementById('ttsInputStatusMessage');
+
+    ttsInputSaveButton.addEventListener('click', function() {
+        const ttsText = ttsInput.value;
+
+        if (!ttsText.length) {
+            ttsInputStatusMessage.textContent = 'No input detected.';
         } else {
-            callback('API Key not found');
+            saveFormData(ttsText)
+                .then((return_value) => {
+                    ttsInputStatusMessage.textContent = return_value;
+                });
+        }
+    });
+}
+
+function remove_api_key() {
+    const removeApiKeyButton = document.getElementById('removeApiKeyButton');
+    const removeApiKeyStatusMessage = document.getElementById('removeApiKeyStatusMessage');
+    
+    removeApiKeyButton.addEventListener('click', function() {
+        try {
+            localStorage.removeItem('babel_tts_apiKey')
+            removeApiKeyStatusMessage.textContent = 'API KEY Removed';
+            setTimeout(() => {
+                window.location.href = 'set_api_key.html';
+            }, 1000);
+
+        } catch (error) {
+            removeApiKeyStatusMessage.textContent = `${error}`
         }
     });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const ttsInputSaveButton = document.getElementById('ttsInputSaveButton');
-    const ttsInput = document.getElementById('ttsInput');
-    const ttsInputStatusMessage = document.getElementById('ttsInputStatusMessage');
-    
-    ttsInputSaveButton.addEventListener('click', function() {
-        const ttsText = ttsInput.value;
-        if (!ttsText.length) {
-            apiKeyStatusMessage.textContent = 'No input detected.';
+    getValueFromLocalStorage(function(apiKey) {
+        if (!apiKey) {
+            setTimeout(() => {
+                ttsInputStatusMessage.textContent = 'set_api_key.html';
+                window.location.href = 'set_api_key.html';
+            }, 1000);
         }else {
-            getApiKey(function(babel_tts_apiKey) {
-                ttsInputStatusMessage.textContent = babel_tts_apiKey;
-            });
+            ttsInputStatusMessage.textContent = `${apiKey} tts_home.html`;
+            remove_api_key();
+            tts_service(apiKey);
         }
     });
 });
-
 
 /*
 document.getElementById("generateTTS").addEventListener("click", async function() {

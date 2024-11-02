@@ -5,7 +5,7 @@
   "description": "TTS some fucking great content",
   "permissions": ["storage"],
   "action": {
-    "default_popup": "main.html",
+    "default_popup": "tts_home.html",
     "default_icon": "temp_logo.png"
   },
   "background": {
