@@ -10,12 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }else if ((!apiKey.startsWith("sk-")) || (apiKey.length < 5)) {
             apiKeyStatusMessage.textContent = 'This is not an API Key :< . OpenAI API key is a very long string starting with "sk-". \n Try with that one next time.';
         }else {
-            chrome.storage.local.set({ babel_tts_apiKey: apiKey }, function() {
-                apiKeyStatusMessage.textContent = 'API Key saved successfully!';
-
-                setTimeout(() => {
-                    window.location.href = 'tts_home.html';
-                }, 1000);
+            chrome.storage.local.set({ babel_tts_openai_apikey: apiKey }, function() {
+                window.location.href = 'tts_home.html';
             });
         }
     });

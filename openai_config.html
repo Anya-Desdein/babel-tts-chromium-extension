@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>USE TTS HERE</title>
+    <script src="./scripts/openai_config.js"></script>
+</head>
+<body>
+    <div>
+        <button id="leaveOpenAiConfig">Return</button>
+    </div>
+    <div>
+        <h2>Remove Current OpenAI API Key From Local Storage</h2>
+        <button id="removeApiKeyButton">Remove</button>
+        <p id="removeApiKeyStatusMessage"></p>
+    </div>
+    <div>
+        <label for="pickVoice">Choose your TTS voice:</label>
+        <select id="pickVoice" name="options">
+            <option value="alloy">Alloy</option>
+            <option value="echo">Echo</option>
+            <option value="fable">Fable</option>
+            <option value="onyx">Onyx</option>
+            <option value="nova">Nova</option>
+            <option value="shimmer">Shimmer</option>
+        </select>
+        <button id="pickVoiceSaveButton">Pick Voice</button>
+        <p id="pickVoiceStatusMessage"></p>
+    </div>
+</body>
+</html>

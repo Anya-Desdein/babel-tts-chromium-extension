@@ -1,9 +1,8 @@
-function getValueFromLocalStorage(callback) {
-    chrome.storage.local.get(function(result) {
-        callback(result.babel_tts_apiKey || `${value} not found`);
+function getValueFromLocalStorage(value, callback) {
+    chrome.storage.local.get(value, function(result) {
+        callback( JSON.stringify(result[value]) || `${result} not found`);
     });
 }
-
 function saveFormData(text) {
     return new Promise((resolve, reject) => {
         chrome.storage.local.set({ babel_tts_plain_text: text }, function()  {
@@ -36,21 +35,10 @@ function ttsService(apiKey) {
     });
 }
 
-function removeApiKey() {
-    const removeApiKeyButton = document.getElementById('removeApiKeyButton');
-    const removeApiKeyStatusMessage = document.getElementById('removeApiKeyStatusMessage');
-    
+function rerouteToSettings() {
+    const removeApiKeyButton = document.getElementById('openAiConfig');    
     removeApiKeyButton.addEventListener('click', function() {
-        try {
-            localStorage.removeItem('babel_tts_apiKey')
-            removeApiKeyStatusMessage.textContent = 'API KEY Removed';
-            setTimeout(() => {
-                window.location.href = 'set_api_key.html';
-            }, 1000);
-
-        } catch (error) {
-            removeApiKeyStatusMessage.textContent = `${error}`
-        }
+        window.location.href = 'openai_config.html';
     });
 }
 
@@ -72,7 +60,6 @@ async function sendRequestToOpenai(text, apiKey) {
             throw new Error(`Invalid Response. Response: ${response} Ok: ${response.ok}`);
         }else {
             const blob = await response.blob()
-            // Prompt the user to save the audio file
             const saveFileHandle = await window.showSaveFilePicker({
                 suggestedName: "output.mp3",
                 types: [{
@@ -92,15 +79,12 @@ async function sendRequestToOpenai(text, apiKey) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    getValueFromLocalStorage(function(apiKey) {
+    getValueFromLocalStorage("babel_tts_openai_apikey", function(apiKey) {
         if (!apiKey) {
-            setTimeout(() => {
-                ttsInputStatusMessage.textContent = 'set_api_key.html';
-                window.location.href = 'set_api_key.html';
-            }, 1000);
+            window.location.href = 'set_api_key.html';
         }else {
             ttsInputStatusMessage.textContent = `${apiKey} tts_home.html`;
-            removeApiKey();
+            rerouteToSettings()
             ttsService(apiKey);
         }
     });
