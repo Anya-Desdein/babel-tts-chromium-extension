@@ -67,7 +67,9 @@ async function sendRequestToOpenai(text, apiKey, voiceName) {
 async function waitForDom() {
     document.addEventListener('DOMContentLoaded', async function() {
         resultApiKey = await getFromLocalStorage('babel_tts_openai_apikey');
+        console.log(resultApiKey)
         if (!resultApiKey) {
+            console.log("changing href " + resultApiKey)
             window.location.href = 'set_api_key.html';
         }
         ttsInputStatusMessage.textContent = `${resultApiKey} tts_home.html`;

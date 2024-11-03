@@ -30,6 +30,10 @@ async function removeApiKeyFromLocalStorage() {
     });
 }
 
+async function changeApiKeyLocalStorage() {
+    addListenerForApiKey("changeApiKeyInput", "changeApiKeyButton", null, "changeApiKeyStatusMessage");
+}
+
 async function returnFromSettings() {
     const leaveOpenAiConfigButton = document.getElementById('leaveOpenAiConfig');    
     leaveOpenAiConfigButton.addEventListener('click', async function() {
@@ -45,6 +49,7 @@ async function waitForDom() {
         } else {
             removeApiKeyStatusMessage.textContent = `${resultApiKey} openai_config.html`;
             returnFromSettings();
+            changeApiKeyLocalStorage();
             removeApiKeyFromLocalStorage();
             pickVoice();
         }
