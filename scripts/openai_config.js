@@ -1,10 +1,11 @@
 async function pickVoice() {
-    let  pickVoice = document.getElementById('pickVoice');
-    pickVoice = pickVoice.value;
     const pickVoiceSaveButton = document.getElementById('pickVoiceSaveButton');
     const pickVoiceStatusMessage = document.getElementById('pickVoiceStatusMessage');
 
     pickVoiceSaveButton.addEventListener('click', async function() {
+        let  pickVoice = document.getElementById('pickVoice');
+        pickVoice = pickVoice.value;
+        
         if (!pickVoice.length) {
             pickVoiceStatusMessage.textContent = 'Something went wrong. No input detected.';
             return;
