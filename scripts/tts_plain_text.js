@@ -1,60 +1,3 @@
-function getValueFromLocalStorage(value, callback) {
-    chrome.storage.local.get(value, function(result) {
-        callback( JSON.stringify(result[value]) || false);
-    });
-}
-
-function saveSettings(key, value) {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.set({ [key]: value }, function()  {
-            if (chrome.runtime.lastError) {
-                reject(new Error(`Failed to save to ${key}`));
-            } else {
-                getValueFromLocalStorage(key, function(result) {
-                    if (!result) {
-                        pickVoiceStatusMessage.textContent = 'Something went wrong. No key in the local storage.';
-                    }else {
-                        pickVoiceStatusMessage.textContent = `Result saved, ${result}`;
-                    }
-                });
-                resolve('Saved successfully');
-            }
-        });
-    });
-}
-
-function saveFormData(text) {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.set({ babel_tts_plain_text: text }, function()  {
-            if (chrome.runtime.lastError) {
-                reject(new Error('Failed to save data'));
-            } else {
-                resolve('Data saved successfully');
-            }
-        });
-    });
-}
-
-function ttsService(apiKey, voiceName) {
-    const ttsInputSaveButton = document.getElementById('ttsInputSaveButton');
-    const ttsInput = document.getElementById('ttsInput');
-    const ttsInputStatusMessage = document.getElementById('ttsInputStatusMessage');
-
-    ttsInputSaveButton.addEventListener('click', function() {
-        const ttsText = ttsInput.value;
-
-        if (!ttsText.length) {
-            ttsInputStatusMessage.textContent = 'No input detected.';
-        } else {
-            saveFormData(ttsText)
-                .then((return_value) => {
-                    ttsInputStatusMessage.textContent = return_value;
-                    sendRequestToOpenai(ttsText, apiKey, voiceName);
-                });
-        }
-    });
-}
-
 function rerouteToSettings() {
     const removeApiKeyButton = document.getElementById('openAiConfig');    
     removeApiKeyButton.addEventListener('click', function() {
@@ -62,9 +5,24 @@ function rerouteToSettings() {
     });
 }
 
+async function ttsService(apiKey, voiceName) {
+    const ttsInputSaveButton = document.getElementById('ttsInputSaveButton');
+    const ttsInput = document.getElementById('ttsInput');
+    const ttsInputStatusMessage = document.getElementById('ttsInputStatusMessage');
+
+    ttsInputSaveButton.addEventListener('click', async function() {
+        const ttsText = ttsInput.value;
+        if (!ttsText.length) {
+            ttsInputStatusMessage.textContent = 'No input detected.';
+        } else {
+            await setToLocalStorage("babel_tts_plain_text", ttsText, ttsInputStatusMessage);
+            await sendRequestToOpenai(ttsText, apiKey, voiceName);
+        }
+    });
+}
+
 async function sendRequestToOpenai(text, apiKey, voiceName) {
     try {
-        voiceName = voiceName.replace(/^['"]|['"]$/g, '');
         console.log(`${text}, ${apiKey}, ${voiceName}.`);
 
         let stringified_text = String(text);
@@ -85,7 +43,7 @@ async function sendRequestToOpenai(text, apiKey, voiceName) {
             })
         })
         if (!response.ok) {
-            throw new Error(`Invalid Response. Response: ${response} Ok: ${response.ok}`);
+            throw new Error(`Invalid Response. Response: ${response} Status Ok: ${response.ok}`);
         }else {
             const blob = await response.blob()
             const saveFileHandle = await window.showSaveFilePicker({
@@ -106,21 +64,21 @@ async function sendRequestToOpenai(text, apiKey, voiceName) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    getValueFromLocalStorage("babel_tts_openai_apikey", function(apiKey) {
-        if (!apiKey) {
+async function waitForDom() {
+    document.addEventListener('DOMContentLoaded', async function() {
+        resultApiKey = await getFromLocalStorage('babel_tts_openai_apikey');
+        if (!resultApiKey) {
             window.location.href = 'set_api_key.html';
-        }else {
-            apiKey = apiKey.replace(/^['"]|['"]$/g, '');
-            ttsInputStatusMessage.textContent = `${apiKey} tts_home.html`;
-            getValueFromLocalStorage("babel_tts_openai_voice_name", function(voiceName) {
-                if (!voiceName) {
-                    saveSettings('babel_tts_openai_voice_name', 'onyx');
-                    voiceName = 'onyx'; 
-                }
-                rerouteToSettings()
-                ttsService(apiKey, voiceName);
-            });
         }
+        ttsInputStatusMessage.textContent = `${resultApiKey} tts_home.html`;
+        resultVoice = await getFromLocalStorage('babel_tts_openai_voice_name');
+        if (!resultVoice) {
+            await setToLocalStorage("babel_tts_openai_voice_name", 'onyx');
+            resultVoice = 'onyx';
+        }
+        rerouteToSettings()
+        ttsService(resultApiKey, resultVoice)
     });
-});
+}
+
+waitForDom()
