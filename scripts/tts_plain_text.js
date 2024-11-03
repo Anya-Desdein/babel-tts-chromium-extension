@@ -25,9 +25,10 @@ async function ttsService(apiKey, voiceName) {
 
         chrome.runtime.sendMessage({ action: 'babel_tts_save_text_input', value: messageContents }, (response) => {
             console.log('Response from service worker:', response.status);
+            if (response.status == 'success') {
+                startProcessingTts = true;
+            }
         });
-
-        await setToLocalStorage("babel_tts_plain_text", ttsText, ttsInputStatusMessage);
     });
 }
 
@@ -46,8 +47,14 @@ async function waitForDom() {
             await setToLocalStorage("babel_tts_openai_voice_name", 'onyx');
             resultVoice = 'onyx';
         }
-        rerouteToSettings()
-        ttsService(resultApiKey, resultVoice)
+        rerouteToSettings();
+
+        generatedFile = '';
+        startProcessingTts = false;
+        ttsService(resultApiKey, resultVoice);
+
+        
+
     });
 }
 

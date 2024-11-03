@@ -43,12 +43,51 @@ async function sendRequestToOpenai(text, apiKey, voiceName) {
 }
 */
 
+function createDynamicFilename(text) {
+  let stringified_text = text;
+  if (!(typeof text === 'string')) {
+    stringified_text = String(stringified_text);
+  }
+
+  let textLen = stringified_text.length;
+  if (textLen < 5) {
+    stringified_text = 'output.mp3'
+    return stringified_text;
+  }
+
+  stringified_text = stringified_text.replace(/\s+/g , '_');
+  let modified_text = '';
+  for (let i = 0; i < textLen; i++) {
+    const char = stringified_text[i];
+    const testC = /^[a-zA-Z]$/.test(char);
+    const testN = /^[0-9]$/.test(char);
+    const testU = /_/.test(char);
+
+    if (testC || testN || testU) {
+      modified_text += char;
+    }
+
+    if (i == 22) {
+      return;
+    }
+  } 
+
+  modified_text = modified_text.replace(/^_+|_+$/g, '');
+  if (modified_text.length < 5) {
+    modified_text = 'output.mp3'
+  }
+  
+  modified_text += '.mp3'
+  return modified_text;
+}
+
 function checkForChanges() {
   if (previousTtsInput == savedTtsInput) {
     return;
   }
 
   console.log('Value changed from', previousTtsInput, 'to', savedTtsInput);
+  console.log(createDynamicFilename(savedTtsInput))
   previousTtsInput = savedTtsInput;
 }
 
@@ -58,6 +97,7 @@ let savedTtsInput = '';
 let msgApiKey = '';
 let msgVoiceName = '';
 
+let generatedFile = null;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (!(request.action === 'babel_tts_save_text_input')){
@@ -69,12 +109,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ status: `missing content in ${JSON.stringify(request)}` });
     return;
   }
+  sendResponse({ status: 'success' });
 
   savedTtsInput = request.value.msgTtsText;
   msgApiKey = request.value.msgApiKey;
   msgVoiceName = request.value.msgVoiceName;
 
-  sendResponse({ status: 'success' });
+  // sendRequestToOpenai(savedTtsInput, msgApiKey, msgVoiceName);
 });
 
 
