@@ -17,6 +17,10 @@ async function ttsService(apiKey, voiceName) {
             return;
         }
 
+        chrome.runtime.sendMessage({ action: 'babel_tts_save_text_input', value: ttsText }, (response) => {
+            console.log('Response from service worker:', response.status);
+        });
+
         await setToLocalStorage("babel_tts_plain_text", ttsText, ttsInputStatusMessage);
         await sendRequestToOpenai(ttsText, apiKey, voiceName);
     });
