@@ -1,9 +1,7 @@
-async function addApiKeyToLocalVariables(errTargetName=null) {
-    document.addEventListener('DOMContentLoaded', async function() {
-        const apiKeySaveButton = document.getElementById('apiKeySaveButton');
-        const apiKeyInput = document.getElementById('apiKeyInput');
-        const errTarget = document.getElementById(errTargetName);
-
+async function addApiKeyToLocalVariables(apiKeyInputName, apiKeySaveButtonName, errTargetName=null) {
+    const apiKeyInput = document.getElementById(apiKeyInputName);
+    const apiKeySaveButton = document.getElementById(apiKeySaveButtonName);
+    const errTarget = document.getElementById(errTargetName);
         await apiKeySaveButton.addEventListener('click', async function() {
             const apiKey = apiKeyInput.value;
             if (!apiKey.length) {
@@ -17,7 +15,18 @@ async function addApiKeyToLocalVariables(errTargetName=null) {
                 }
             }
         });
+}
+
+async function waitForDom() {
+    await document.addEventListener('DOMContentLoaded', async function() {        
+        resultApiKey = await getFromLocalStorage('babel_tts_openai_apikey');
+        if (resultApiKey) {
+            window.location.href = 'tts_home.html';
+        } else {
+            await addApiKeyToLocalVariables("apiKeyInput", "apiKeySaveButton", "apiKeyStatusMessage");
+        }
     });
 }
 
-addApiKeyToLocalVariables("apiKeyStatusMessage");
+waitForDom()
+
