@@ -14,10 +14,11 @@ async function ttsService(apiKey, voiceName) {
         const ttsText = ttsInput.value;
         if (!ttsText.length) {
             ttsInputStatusMessage.textContent = 'No input detected.';
-        } else {
-            await setToLocalStorage("babel_tts_plain_text", ttsText, ttsInputStatusMessage);
-            await sendRequestToOpenai(ttsText, apiKey, voiceName);
+            return;
         }
+
+        await setToLocalStorage("babel_tts_plain_text", ttsText, ttsInputStatusMessage);
+        await sendRequestToOpenai(ttsText, apiKey, voiceName);
     });
 }
 
@@ -73,6 +74,7 @@ async function waitForDom() {
             window.location.href = 'set_api_key.html';
         }
         ttsInputStatusMessage.textContent = `${resultApiKey} tts_home.html`;
+
         resultVoice = await getFromLocalStorage('babel_tts_openai_voice_name');
         if (!resultVoice) {
             await setToLocalStorage("babel_tts_openai_voice_name", 'onyx');

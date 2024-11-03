@@ -7,12 +7,16 @@ async function pickVoice() {
     pickVoiceSaveButton.addEventListener('click', async function() {
         if (!pickVoice.length) {
             pickVoiceStatusMessage.textContent = 'Something went wrong. No input detected.';
-        }else if (pickVoice == "alloy" || pickVoice == "echo" || pickVoice == "fable" || pickVoice == "onyx" || pickVoice == "nova" || pickVoice == "shimmer") {
+            return;
+        }
+        
+        if (pickVoice == "alloy" || pickVoice == "echo" || pickVoice == "fable" || pickVoice == "onyx" || pickVoice == "nova" || pickVoice == "shimmer") {
             pickVoiceStatusMessage.textContent = `You picked: ${pickVoice}`;
             await setToLocalStorage("babel_tts_openai_voice_name", pickVoice, pickVoiceStatusMessage);
-        }else {
-            pickVoiceStatusMessage.textContent = `Incorrect value`;
+            return;
         }
+
+        pickVoiceStatusMessage.textContent = `Incorrect value`;
     });
 }
 
@@ -20,7 +24,7 @@ async function removeApiKeyFromLocalStorage() {
     const removeApiKeyButton = document.getElementById('removeApiKeyButton');
     const removeApiKeyStatusMessage = document.getElementById('removeApiKeyStatusMessage');
     
-    await removeApiKeyButton.addEventListener('click', async function() {
+    removeApiKeyButton.addEventListener('click', async function() {
         const err = await removeFromLocalStorage("babel_tts_openai_apikey", removeApiKeyStatusMessage);
         if (!err) {
             setTimeout(() => {
@@ -42,17 +46,18 @@ async function returnFromSettings() {
 }
 
 async function waitForDom() {
-    await document.addEventListener('DOMContentLoaded', async function() {
+    document.addEventListener('DOMContentLoaded', async function() {
         resultApiKey = await getFromLocalStorage('babel_tts_openai_apikey');
         if (!resultApiKey) {
             window.location.href = 'set_api_key.html';
-        } else {
-            removeApiKeyStatusMessage.textContent = `${resultApiKey} openai_config.html`;
-            returnFromSettings();
-            changeApiKeyLocalStorage();
-            removeApiKeyFromLocalStorage();
-            pickVoice();
+            return;
         }
+
+        removeApiKeyStatusMessage.textContent = `${resultApiKey} openai_config.html`;
+        returnFromSettings();
+        changeApiKeyLocalStorage();
+        removeApiKeyFromLocalStorage();
+        pickVoice();
     });
 }
 
