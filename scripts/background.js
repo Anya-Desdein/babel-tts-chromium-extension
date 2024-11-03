@@ -76,7 +76,7 @@ function createDynamicFilename(text) {
   if (modified_text.length < 5) {
     modified_text = 'output.mp3'
   }
-  
+
   modified_text += '.mp3'
   return modified_text;
 }
@@ -99,6 +99,19 @@ let msgVoiceName = '';
 
 let generatedFile = null;
 
+/* TODO: Reintegrate calling api
+- Save the filename to a global variable here
+- Somehow listen for change in startProcessingTts of find another way to do it
+- If it changes, then all buttons on the extension should be blocked (change state), use a loading icon of sorts
+- Asynchronously when name is being created (add async!), use fetch to make a post request, again, with parameters from input
+- Change something on the frontend to signify that it finished processing
+- 2 new buttons: save to .mp3 and listen in browser, user clicks one of their choice and it happens
+- make it happen
+
+    TODO 2: Check if other languages are available, if yes, add the whole logic of handling lang choice (-_-) zzz
+
+    TODO 3: Add some styles (-_-) zzzzzzzzzzzzzzz
+*/
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (!(request.action === 'babel_tts_save_text_input')){
     sendResponse({ status: 'wrong action' });
