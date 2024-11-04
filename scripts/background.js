@@ -75,11 +75,12 @@ function createDynamicFilename(text) {
   modified_text = modified_text.replace(/^_+|_+$/g, '');
   if (modified_text.length < 5) {
     modified_text = 'output.mp3'
+    return;
   }
 
   modified_text += '.mp3'
   return modified_text;
-}
+};
 
 function checkForChanges() {
   if (previousTtsInput == savedTtsInput) {
