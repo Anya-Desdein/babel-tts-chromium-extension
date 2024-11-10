@@ -1,12 +1,17 @@
 {
   "manifest_version": 3,
-  "name": "BBL-TTS",
+  "name": "BBL-TextToSpeech",
   "version": "0.1",
-  "description": "TTS some fucking great content",
+  "description": "TTS that just works.",
+  "icons": {
+    "16": "img/logo_16.png",
+    "32": "img/logo_32.png",
+    "48": "img/logo_48.png",
+    "128": "img/logo_128.png"
+  },
   "permissions": ["storage"],
   "action": {
-    "default_popup": "tts_home.html",
-    "default_icon": "temp_logo.png"
+    "default_popup": "home.html"
   },
   "background": {
     "service_worker": "./scripts/background.js",

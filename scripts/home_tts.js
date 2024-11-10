@@ -31,13 +31,13 @@ async function ttsService(apiKey, voiceName) {
     });
 }
 
-function addListenerForApiKey(apiKeyInputName, apiKeySaveButtonName, returnAddr=null ,errTargetName=null) {
-    const apiKeyInput      = document.getElementById(apiKeyInputName);
+function addListenerForApiKey(apiKeyOpenAiInputName, apiKeySaveButtonName, returnAddr=null ,errTargetName=null) {
+    const apiKeyOpenAiInput      = document.getElementById(apiKeyOpenAiInputName);
     const apiKeySaveButton = document.getElementById(apiKeySaveButtonName);
     const errTarget        = document.getElementById(errTargetName);
 
     apiKeySaveButton.addEventListener('click', async function() {
-        const apiKey = apiKeyInput.value;
+        const apiKey = apiKeyOpenAiInput.value;
         
         if (!apiKey.length) {
             errTarget.textContent = 'No input detected. OpenAI API key is a very long string starting with "sk-". \n Try with that one next time.';
@@ -53,6 +53,15 @@ function addListenerForApiKey(apiKeyInputName, apiKeySaveButtonName, returnAddr=
         if (!err && returnAddr) {
             window.location.href = returnAddr;
         }
+    });
+}
+
+function addListenerResizeTextArea(textAreaId) {
+    const textarea = document.getElementById(textAreaId);
+
+    textarea.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
     });
 }
 
@@ -84,18 +93,19 @@ async function waitForDom() {
         if (!resultApiKey) {
             window.location.href = 'set_api_key.html';
         }
-        ttsInputStatusMessage.textContent = `${resultApiKey} tts_home.html`;
-
+        
         resultVoice = await getFromLocalStorage('babel_tts_openai_voice_name');
         if (!resultVoice) {
             await setToLocalStorage("babel_tts_openai_voice_name", 'onyx');
             resultVoice = 'onyx';
         }
         rerouteToSettings();
+        addListenerResizeTextArea("ttsInput");
 
         ttsService(resultApiKey, resultVoice);
         addListenerForProcessUsIn(saveButton = "ttsOutputSaveButton", playButton = "ttsOutputPlayButton", generateButton = "ttsInputSaveButton", cogButton = "openAiConfig", loadingMsg = "ttsInputStatusMessage");
         addListenerStartDownloadProcess();
+
     });
 }
 

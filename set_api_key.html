@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>API Key Input</title>
+    <title>OpenAI API Key For TTS</title>
     <script src="./scripts/modify_chrome_local_variables.js"></script>
     <script src="./scripts/set_openai_api_key.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div>
-        <h2>Enter OpenAI API Key</h2>
-        <input type="text" id="apiKeyInput" placeholder="Enter your OpenAI API key" />
-        <button id="apiKeySaveButton">Save To Local Storage</button>
-        <p id="apiKeyStatusMessage"></p>
+        <div>
+            <h2>Enter Your OpenAI API Key</h2>
+            <input type="text" id="apiKeyOpenAiInput" placeholder="Enter Your OpenAI API Key" />
+            <button id="apiKeyOpenAiSaveButton">Save To Chrome Local Storage</button>
+            <p id="apiKeyOpenAiStatusMessage"></p>
+        </div>
     </div>
 </body>
 </html>

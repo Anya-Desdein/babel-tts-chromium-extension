@@ -42,7 +42,7 @@ async function changeApiKeyLocalStorage() {
 async function returnFromSettings() {
     const leaveOpenAiConfigButton = document.getElementById('leaveOpenAiConfig');    
     leaveOpenAiConfigButton.addEventListener('click', async function() {
-        window.location.href = 'tts_home.html';
+        window.location.href = 'home.html';
     });
 }
 

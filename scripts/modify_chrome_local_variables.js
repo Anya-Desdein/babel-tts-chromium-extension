@@ -33,24 +33,22 @@ async function removeFromLocalStorage(key, errTarget=null) {
     result = await getFromLocalStorage(key);
 
     if (!result) {
-        if (errTarget) {
-            errTarget.textContent = "Key removed from local storage.";
-        }
         return null;
     }
+
     if (errTarget) {
         errTarget.textContent = `Something went wrong. Value ${result} still exists under key ${key}`;
     }
     return key;
 }
 
-function addListenerForApiKey(apiKeyInputName, apiKeySaveButtonName, returnAddr=null ,errTargetName=null) {
-    const apiKeyInput      = document.getElementById(apiKeyInputName);
-    const apiKeySaveButton = document.getElementById(apiKeySaveButtonName);
+function addListenerForOpenAIApiKey(apiKeyOpenAiInputName, apiKeyOpenAiSaveButtonName, returnAddr=null , errTargetName=null) {
+    const apiKeyOpenAiInput      = document.getElementById(apiKeyOpenAiInputName);
+    const apiKeyOpenAiSaveButton = document.getElementById(apiKeyOpenAiSaveButtonName);
     const errTarget        = document.getElementById(errTargetName);
 
-    apiKeySaveButton.addEventListener('click', async function() {
-        const apiKey = apiKeyInput.value;
+    apiKeyOpenAiSaveButton.addEventListener('click', async function() {
+        const apiKey = apiKeyOpenAiInput.value;
         
         if (!apiKey.length) {
             errTarget.textContent = 'No input detected. OpenAI API key is a very long string starting with "sk-". \n Try with that one next time.';
