@@ -17,10 +17,10 @@ async function sendRequestToOpenai(text, apiKey, voiceName) {
         throw new Error(`Invalid Response. Response: ${response} Status Ok: ${response.ok}`);
       }else {
         generatedFileBlob = await response.blob();
+        convertedData = await convertMp3BlobToJson(generatedFileBlob);
 
         console.log("Blob size: ", generatedFileBlob.size);
         console.log("Blob type: ", generatedFileBlob.type);
-
         processingState = 'yes';
       }
   } catch (error) {
@@ -91,6 +91,17 @@ function checkIfTtsProcessing() {
   }
 }
 
+async function convertMp3BlobToJson(blob) {
+  const dataArrayBuffer = await blob.arrayBuffer();
+  console.log(dataArrayBuffer);
+  const dataUint8Array = new Uint8Array(dataArrayBuffer);
+  console.log(dataUint8Array);
+  const dataArray = Array.from(dataUint8Array);
+  console.log(dataArray);
+
+  return dataArray;
+}
+
 let previousTtsInput = '';
 let savedTtsInput = '';
 let msgApiKey = '';
@@ -98,6 +109,7 @@ let msgVoiceName = '';
 
 let ttsFilename = '';
 let generatedFileBlob = null;
+let convertedData = null;
 let processingState = 'no';
 
 /* TODO: Fix listeners and messaging 
@@ -134,10 +146,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return;
   }
 
-  console.log("Blob size2: ", generatedFileBlob.size);
-  console.log("Blob type2: ", generatedFileBlob.type);
-  
-  sendResponse({blob: generatedFileBlob, ttsFilename: ttsFilename });
+  console.log(convertedData);
+  sendResponse({blob: convertedData, ttsFilename: ttsFilename });
 });
 
 
