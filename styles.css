@@ -10,23 +10,37 @@ html, body {
 
 body {
     background: linear-gradient(to top, #200c17 0%, #110816 20% ,#110816 30%, #110816 80%, #040409 100%);
-    box-shadow: inset 1.25em 1.25em 3.75em rgb(4, 4, 9, 0.2),
-    inset -1.25em -1.25em 3.75em rgb(47, 40, 51, 0.2);
-    color: #fefeff;
-
+    box-shadow: inset 1.25em 1.25em 3.75em rgba(4, 4, 9, 0.2),
+    inset -1.25em -1.25em 3.75em rgba(47, 40, 51, 0.2);
+    color: #d8cbc2;
     text-align: center;
 }
 
 h1 {
     font-size: 1.5rem;
+    text-shadow: 
+        0 0 1.2rem rgba(164, 48, 48, 0.3),
+        0 0 0.8rem rgba(164, 48, 48, 0.3),
+        0 0 1.2rem rgba(164, 48, 48, 0.3),
+        0 0 0.8rem rgba(164, 48, 48, 0.3);
 }
 
 h2 {
     font-size: 1.25rem;
+    text-shadow: 
+        0 0 1rem rgba(164, 48, 48, 0.3),
+        0 0 0.7rem rgba(164, 48, 48, 0.3),
+        0 0 1rem rgba(164, 48, 48, 0.3),
+        0 0 0.7rem rgba(164, 48, 48, 0.3);
 }
 
 h3 {
     font-size: 1.04rem;
+    text-shadow: 
+    0 0 0.9375rem rgba(164, 48, 48, 0.3),
+    0 0 0.625rem rgba(164, 48, 48, 0.3),
+    0 0 0.9375rem rgba(164, 48, 48, 0.3),
+    0 0 0.625rem rgba(164, 48, 48, 0.3);
 }
 
 h4 {
@@ -46,7 +60,8 @@ button {
     outline: none;
 
     background: rgba(29, 13, 36, 0.24);
-    color: #fefeff;
+    color: #d8cbc2;
+
     font-size: 1rem;
     
     box-shadow: 
@@ -67,34 +82,40 @@ button {
     transition: all 0.26s ease-in-out;
 }
 
-button:hover {
-    background-color: rgba(78, 42, 54, 0.30);
-    box-shadow: 
-    inset -0.24rem -0.24rem 0.4rem hsla(278, 34%, 67%, 0.15), 
-    inset 0.24rem 0.24rem 0.4rem rgba(0, 0, 0, 0.47),          
-    -0.2rem -0.2rem 0.8rem rgba(255, 255, 255, 0.02),       
-    0.2rem 0.2rem 0.8rem rgba(0, 0, 0, 033);                
+button:hover, button:active, button:focus {
+    background-color: rgba(0, 0, 0, 0.33);
 
-}
+    text-shadow: 
+    0 0 0.08rem rgba(0, 0, 0, 0.8),
+    0 0 0.08rem rgba(0, 0, 0, 0.8),
+    0 0 0.08rem rgba(0, 0, 0, 0.8),
+    0 0 0.08rem rgba(0, 0, 0, 0.8),
 
-button:active, button:focus {
-    background-color: rgba(78, 42, 54, 0.30);
+    0 0 0.6rem rgba(164, 48, 48, 0.82),
+    0 0 0.42rem rgba(164, 48, 48, 0.82),
+    0 0 0.6rem rgba(164, 48, 48, 0.82),
+    0 0 0.42rem rgba(164, 48, 48, 0.82);
+
     box-shadow: 
-    inset -0.24rem -0.24rem 0.4rem hsla(278, 34%, 67%, 0.15), 
+    inset -0.24rem -0.24rem 0.4rem rgba(178, 142, 199, 0.15), 
     inset 0.24rem 0.24rem 0.4rem rgba(0, 0, 0, 0.47),          
     -0.2rem -0.2rem 0.8rem rgba(255, 255, 255, 0.02),       
     0.2rem 0.2rem 0.8rem rgba(0, 0, 0, 0.33);                
-
 }
 
-/* Text Field Styles */
+button:disabled {
+    background-color: #e7e7e7;
+    color: #a1a1a1;
+    cursor: not-allowed;
+}
+
 input[type="text"], input[type="password"], textarea {
     border: none;
     outline: none;
     resize: none;
 
     background: rgba(9, 4, 12, 0.33);
-    color: #fefeff;
+    color: #d8cbc2;
     font-size: 0.83rem;
 
     box-sizing: border-box;
@@ -109,7 +130,7 @@ input[type="text"], input[type="password"], textarea {
         0.4rem 0.4rem 0.8rem rgba(70, 48, 87, 0.02),
         -0.4rem -0.4rem 0.8rem rgba(0, 0, 0, 0.33); 
 
-    border: 2px solid rgb(204, 204, 204, 0.1);
+    border: 2px solid rgba(204, 204, 204, 0.1);
 
     -webkit-transition: all 0.26s ease-in-out;
     -moz-transition: all 0.26s ease-in-out;
@@ -119,5 +140,11 @@ input[type="text"], input[type="password"], textarea {
 }
 
 input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
-    border: 2px solid rgb(204, 204, 204, 0.33);
+    border: 2px solid rgba(151, 134, 116, 0.33);
+    color: #fff9ed;
 }
+
+input::placeholder, textarea::placeholder {
+    color: #6b5b5b;
+}
+

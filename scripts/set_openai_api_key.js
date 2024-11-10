@@ -6,7 +6,7 @@ function waitForDom() {
             return;
         }
         
-        addListenerForApiKey("apiKeyOpenAiInput", "apiKeyOpenAiSaveButton", 'home.html', "apiKeyOpenAiStatusMessage");
+        addListenerForApiKey("apiKeyInputOpenAi", "apiKeySaveButtonOpenAi", 'home.html', "apiKeyStatusMessageOpenAi");
     });
 }
 

@@ -5,10 +5,8 @@ function rerouteToSettings() {
     });
 }
 
-async function ttsService(apiKey, voiceName) {
-    const ttsInputSaveButton = document.getElementById('ttsInputSaveButton');
-    const ttsInput = document.getElementById('ttsInput');
-    const ttsInputStatusMessage = document.getElementById('ttsInputStatusMessage');
+async function ttsService(apiKey, voiceName, saveButtonName, ttsInputName, ttsInputStatusMessageName) {
+
 
     ttsInputSaveButton.addEventListener('click', async function() {
         const ttsText = ttsInput.value;
@@ -88,9 +86,12 @@ function addListenerStartDownloadProcess() {
 
 async function waitForDom() {
     document.addEventListener('DOMContentLoaded', async function() {
-        resultApiKey = await getFromLocalStorage('babel_tts_openai_apikey');
+        const ttsInputSaveButtonOpenAi = document.getElementById('ttsInputSaveButtonOpenAi');
+        const ttsInpuOpenAi = document.getElementById('ttsInputOpenAi');
+        const ttsInputStatusMessageOpenAi = document.getElementById('ttsInputStatusMessageOpenAi');
+        resultApiKeyOpenAI = await getFromLocalStorage('babel_tts_openai_apikey');
 
-        if (!resultApiKey) {
+        if (!resultApiKeyOpenAI) {
             window.location.href = 'set_api_key.html';
         }
         
@@ -102,7 +103,8 @@ async function waitForDom() {
         rerouteToSettings();
         addListenerResizeTextArea("ttsInput");
 
-        ttsService(resultApiKey, resultVoice);
+
+        ttsService(resultApiKeyOpenAI, resultVoice, ttsInputSaveButtonOpenAi, ttsInpuOpenAi, ttsInputStatusMessageOpenAi);
         addListenerForProcessUsIn(saveButton = "ttsOutputSaveButton", playButton = "ttsOutputPlayButton", generateButton = "ttsInputSaveButton", cogButton = "openAiConfig", loadingMsg = "ttsInputStatusMessage");
         addListenerStartDownloadProcess();
 
