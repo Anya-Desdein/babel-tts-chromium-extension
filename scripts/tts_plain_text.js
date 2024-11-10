@@ -17,64 +17,71 @@ async function ttsService(apiKey, voiceName) {
             return;
         }
 
-        chrome.runtime.sendMessage({ action: 'babel_tts_save_text_input', value: ttsText }, (response) => {
-            console.log('Response from service worker:', response.status);
-        });
+        const messageContents = {
+            msgTtsText: ttsText,
+            msgApiKey: apiKey, 
+            msgVoiceName: voiceName
+        };
 
-        await setToLocalStorage("babel_tts_plain_text", ttsText, ttsInputStatusMessage);
-        await sendRequestToOpenai(ttsText, apiKey, voiceName);
+        chrome.runtime.sendMessage({ action: 'babel_tts_save_text_input', value: messageContents }, (response) => {
+            if (response.status == 'success') {
+                console.log("Processing started!")
+            }
+        });
     });
 }
 
-async function sendRequestToOpenai(text, apiKey, voiceName) {
-    try {
-        console.log(`${text}, ${apiKey}, ${voiceName}.`);
+function addListenerForApiKey(apiKeyInputName, apiKeySaveButtonName, returnAddr=null ,errTargetName=null) {
+    const apiKeyInput      = document.getElementById(apiKeyInputName);
+    const apiKeySaveButton = document.getElementById(apiKeySaveButtonName);
+    const errTarget        = document.getElementById(errTargetName);
 
-        let stringified_text = String(text);
-        stringified_text = stringified_text.replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g , '_').slice(0, 22) + ".mp3";
-        stringified_text = stringified_text.length <= 7 ? "output.mp3" : stringified_text;
-        console.log(`${stringified_text}`);
-
-        const response = await fetch("https://api.openai.com/v1/audio/speech", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${apiKey}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                model: "tts-1",
-                voice: voiceName,
-                input: text
-            })
-        })
-        if (!response.ok) {
-            throw new Error(`Invalid Response. Response: ${response} Status Ok: ${response.ok}`);
-        }else {
-            const blob = await response.blob()
-            const saveFileHandle = await window.showSaveFilePicker({
-                suggestedName: stringified_text,
-                types: [{
-                    description: "Audio Files",
-                    accept: { "audio/mpeg": [".mp3"] }
-                }]
-            })
-            const writableStream = await saveFileHandle.createWritable();
-            await writableStream.write(blob);
-            await writableStream.close()
-            document.getElementById("ttsInputStatusMessage").textContent = "Saved to a file.";
+    apiKeySaveButton.addEventListener('click', async function() {
+        const apiKey = apiKeyInput.value;
+        
+        if (!apiKey.length) {
+            errTarget.textContent = 'No input detected. OpenAI API key is a very long string starting with "sk-". \n Try with that one next time.';
+            return;
         }
-    } catch (error) {
-        console.error("Error generating TTS:", error);
-        document.getElementById("ttsInputStatusMessage").textContent = `Failed to generate. Error: ${error}`;
-    }
+        
+        if ((!apiKey.startsWith("sk-")) || (apiKey.length < 5)) {
+            errTarget.textContent = 'This is not an API Key :< . OpenAI API key is a very long string starting with "sk-". \n Try with that one next time.';
+            return;
+        }
+
+        err = await setToLocalStorage('babel_tts_openai_apikey', apiKey, errTarget);
+        if (!err && returnAddr) {
+            window.location.href = returnAddr;
+        }
+    });
+}
+
+function revertResponseToBlob(dataArray, mimeType = 'audio/mpeg') {
+    const revUint8Array = new Uint8Array(dataArray);
+    const blob = new Blob([revUint8Array], {type: mimeType});
+    return blob;
+}
+
+function addListenerStartDownloadProcess() {
+    saveButton = document.getElementById("ttsOutputSaveButton");
+    saveButton.addEventListener('click', async function() {
+        chrome.runtime.sendMessage({ action: 'babel_tts_download_mp3', value: "download"}, (response) => {
+            const receivedData = response.blob;
+
+            // Due to serialization of sendMessage responses, blob has to be converted to array and then reverted
+            const blob = revertResponseToBlob(receivedData);
+            const ttsFilename = response.ttsFilename;
+
+            saveResultsToMp3(blob, ttsFilename);
+        });
+    });
 }
 
 async function waitForDom() {
     document.addEventListener('DOMContentLoaded', async function() {
         resultApiKey = await getFromLocalStorage('babel_tts_openai_apikey');
-        console.log(resultApiKey)
+
         if (!resultApiKey) {
-            console.log("changing href " + resultApiKey)
             window.location.href = 'set_api_key.html';
         }
         ttsInputStatusMessage.textContent = `${resultApiKey} tts_home.html`;
@@ -84,8 +91,11 @@ async function waitForDom() {
             await setToLocalStorage("babel_tts_openai_voice_name", 'onyx');
             resultVoice = 'onyx';
         }
-        rerouteToSettings()
-        ttsService(resultApiKey, resultVoice)
+        rerouteToSettings();
+
+        ttsService(resultApiKey, resultVoice);
+        addListenerForProcessUsIn(saveButton = "ttsOutputSaveButton", playButton = "ttsOutputPlayButton", generateButton = "ttsInputSaveButton", cogButton = "openAiConfig", loadingMsg = "ttsInputStatusMessage");
+        addListenerStartDownloadProcess();
     });
 }
 
