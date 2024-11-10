@@ -79,18 +79,15 @@ function addListenerForProcessUsIn(saveButton = null, playButton = null, generat
         if (request.value == "no") {
             document.getElementById(loadingMsg).textContent = "";
 
-            document.getElementById(saveButton).style.pointerEvents = 'auto';
             document.getElementById(saveButton).disabled = false;
             document.getElementById(saveButton).style.visibility = 'hidden';
     
-            document.getElementById(playButton).style.pointerEvents = 'auto';
             document.getElementById(playButton).disabled = false;
             document.getElementById(playButton).style.visibility = 'hidden';
     
-            document.getElementById(generateButton).style.pointerEvents = 'auto';
             document.getElementById(generateButton).disabled = false;
     
-            document.getElementById(cogButton).style.pointerEvents = 'auto';        
+            document.getElementById(cogButton).disabled = false;     
             //document.getElementById(cogButton).disabled = false;    
     
             return;
@@ -100,18 +97,15 @@ function addListenerForProcessUsIn(saveButton = null, playButton = null, generat
             console.log("Processing in progress.")
             document.getElementById(loadingMsg).textContent = "Processing in Progress.";
     
-            document.getElementById(saveButton).style.pointerEvents = 'none';
             document.getElementById(saveButton).disabled = true;
             document.getElementById(saveButton).style.visibility = 'visible';
     
-            document.getElementById(playButton).style.pointerEvents = 'none';
             document.getElementById(playButton).disabled = true;
             document.getElementById(playButton).style.visibility = 'visible';
-    
-            document.getElementById(generateButton).style.pointerEvents = 'none';
+
             document.getElementById(generateButton).disabled = true;
     
-            document.getElementById(cogButton).style.pointerEvents = 'none';        
+            document.getElementById(cogButton).disabled = true;      
             //document.getElementById(cogButton).disabled = true;       
             return;
         }
@@ -119,24 +113,38 @@ function addListenerForProcessUsIn(saveButton = null, playButton = null, generat
         console.log("Processing finished.")
         document.getElementById(loadingMsg).textContent = "";
 
-        document.getElementById(saveButton).style.pointerEvents = 'auto';
         document.getElementById(saveButton).disabled = false;
         document.getElementById(saveButton).style.visibility = 'visible';
 
-        document.getElementById(playButton).style.pointerEvents = 'auto';
         document.getElementById(playButton).disabled = false;
         document.getElementById(playButton).style.visibility = 'visible';
 
-        document.getElementById(generateButton).style.pointerEvents = 'auto';
         document.getElementById(generateButton).disabled = false;
 
-        document.getElementById(cogButton).style.pointerEvents = 'auto';        
+        document.getElementById(cogButton).disabled = false;    
         //document.getElementById(cogButton).disabled = false;    
 
       });
 }
 
 async function saveResultsToMp3(blob, ttsFilename) {
+    /*
+    const url = URL.createObjectURL(blob);
+    
+    chrome.downloads.download({
+        url: url,
+        filename: ttsFilename,
+        saveAs: true
+    }, (downloadId) => {
+        if (chrome.runtime.lastError) {
+            console.error("Error downloading file:", chrome.runtime.lastError);
+        } else {
+            console.log("Download initiated with ID:", downloadId);
+        }
+        URL.revokeObjectURL(url); // Clean up the URL regardless of success or failure
+    });
+    */
+
     const saveFileHandle = await window.showSaveFilePicker({
       suggestedName: ttsFilename,
         types: [{
@@ -145,14 +153,17 @@ async function saveResultsToMp3(blob, ttsFilename) {
         }]
     })
     const writableStream = await saveFileHandle.createWritable();
-    console.log(blob);
+
+    // mp3Blob = new Blob(blob, { type: 'audio/mp3' });
+    console.log("Blob size4: ", blob.size);
+    console.log("Blob type4: ", blob.type);
     
     if (!blob) {
         chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file', value: "no" });
         return;
     }
 
-    await writableStream.write(blob);
+    await writableStream.write( blob );
     await writableStream.close();
-    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file', value: "no" });
+    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file', value: "yes" });
   }

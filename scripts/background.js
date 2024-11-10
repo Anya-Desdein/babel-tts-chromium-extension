@@ -17,6 +17,10 @@ async function sendRequestToOpenai(text, apiKey, voiceName) {
         throw new Error(`Invalid Response. Response: ${response} Status Ok: ${response.ok}`);
       }else {
         generatedFileBlob = await response.blob();
+
+        console.log("Blob size: ", generatedFileBlob.size);
+        console.log("Blob type: ", generatedFileBlob.type);
+
         processingState = 'yes';
       }
   } catch (error) {
@@ -50,7 +54,7 @@ function createDynamicFilename(text) {
     }
 
     if (i == 22) {
-      return 'output.mp3';
+      return;
     }
   } 
 
@@ -129,7 +133,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (!(request.value == "download")) {
     return;
   }
-  sendResponse({blob: generatedFileBlob, ttsFilename: ttsFilename })
+
+  console.log("Blob size2: ", generatedFileBlob.size);
+  console.log("Blob type2: ", generatedFileBlob.type);
+  
+  sendResponse({blob: generatedFileBlob, ttsFilename: ttsFilename });
 });
 
 

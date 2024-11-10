@@ -61,8 +61,12 @@ function addListenerStartDownloadProcess() {
     saveButton = document.getElementById("ttsOutputSaveButton");
     saveButton.addEventListener('click', async function() {
         chrome.runtime.sendMessage({ action: 'babel_tts_download_mp3', value: "download"}, (response) => {
-            const blob = response.blob;
+            console.log(response);
+            let blob = response.blob;
             const ttsFilename = response.ttsFilename;
+            
+            console.log("Blob size3: ", blob.size);
+            console.log("Blob type3: ", blob.type);
             saveResultsToMp3(blob, ttsFilename);
         });
     });
