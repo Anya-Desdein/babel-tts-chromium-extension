@@ -24,7 +24,6 @@ async function ttsService(apiKey, voiceName) {
         };
 
         chrome.runtime.sendMessage({ action: 'babel_tts_save_text_input', value: messageContents }, (response) => {
-            console.log('Response from service worker:', response.status);
             if (response.status == 'success') {
                 console.log("Processing started!")
             }
@@ -83,7 +82,6 @@ async function waitForDom() {
         resultApiKey = await getFromLocalStorage('babel_tts_openai_apikey');
 
         if (!resultApiKey) {
-            console.log("changing href " + resultApiKey)
             window.location.href = 'set_api_key.html';
         }
         ttsInputStatusMessage.textContent = `${resultApiKey} tts_home.html`;

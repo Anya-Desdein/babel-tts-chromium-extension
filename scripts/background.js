@@ -32,6 +32,7 @@ async function sendRequestToOpenai(text, apiKey, voiceName) {
 
 function createDynamicFilename(text) {
   let stringified_text = text;
+
   if (!(typeof text === 'string')) {
     stringified_text = String(stringified_text);
   }
@@ -42,9 +43,11 @@ function createDynamicFilename(text) {
   }
 
   stringified_text = stringified_text.replace(/\s+/g , '_');
+
   let modified_text = '';
   for (let i = 0; i < textLen; i++) {
     const char = stringified_text[i];
+
     const testC = /^[a-zA-Z]$/.test(char);
     const testN = /^[0-9]$/.test(char);
     const testU = /_/.test(char);
@@ -54,7 +57,7 @@ function createDynamicFilename(text) {
     }
 
     if (i == 22) {
-      return;
+      break;
     }
   } 
 
@@ -143,7 +146,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return;
   }
 
-  console.log(ttsFilename);
   sendResponse({blob: convertedData, ttsFilename: ttsFilename });
 });
 

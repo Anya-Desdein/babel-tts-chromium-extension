@@ -29,7 +29,6 @@ async function setToLocalStorage(key, value, errTarget=null) {
 }
 
 async function removeFromLocalStorage(key, errTarget=null) {
-    console.log(typeof key, key);
     await chrome.storage.local.remove(key);
     result = await getFromLocalStorage(key);
 
@@ -88,13 +87,10 @@ function addListenerForProcessUsIn(saveButton = null, playButton = null, generat
             document.getElementById(generateButton).disabled = false;
     
             document.getElementById(cogButton).disabled = false;     
-            //document.getElementById(cogButton).disabled = false;    
-    
             return;
         }
 
         if (request.value == "processing") {
-            console.log("Processing in progress.")
             document.getElementById(loadingMsg).textContent = "Processing in Progress.";
     
             document.getElementById(saveButton).disabled = true;
@@ -106,11 +102,9 @@ function addListenerForProcessUsIn(saveButton = null, playButton = null, generat
             document.getElementById(generateButton).disabled = true;
     
             document.getElementById(cogButton).disabled = true;      
-            //document.getElementById(cogButton).disabled = true;       
             return;
         }
 
-        console.log("Processing finished.")
         document.getElementById(loadingMsg).textContent = "";
 
         document.getElementById(saveButton).disabled = false;
@@ -122,8 +116,6 @@ function addListenerForProcessUsIn(saveButton = null, playButton = null, generat
         document.getElementById(generateButton).disabled = false;
 
         document.getElementById(cogButton).disabled = false;    
-        //document.getElementById(cogButton).disabled = false;    
-
       });
 }
 
