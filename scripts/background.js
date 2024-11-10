@@ -17,10 +17,10 @@ async function sendRequestToOpenai(text, apiKey, voiceName) {
         throw new Error(`Invalid Response. Response: ${response} Status Ok: ${response.ok}`);
       }else {
         generatedFileBlob = await response.blob();
-        convertedData = await convertMp3BlobToJson(generatedFileBlob);
+        
+        // Due to serialization of sendMessage responses, blob has to be converted to array and then reverted
+        convertedData = await serializeMp3Blob(generatedFileBlob);
 
-        console.log("Blob size: ", generatedFileBlob.size);
-        console.log("Blob type: ", generatedFileBlob.type);
         processingState = 'yes';
       }
   } catch (error) {
@@ -72,7 +72,12 @@ function checkIfTtsProcessing() {
     processingState = "processing2";
 
     chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file', value: "processing" });
-    console.log('Value changed from', previousTtsInput, 'to', savedTtsInput);
+
+    if (previousTtsInput == savedTtsInput) {
+      processingState = 'yes';
+      return;
+    }
+
     ttsFilename = createDynamicFilename(savedTtsInput);
 
     previousTtsInput = savedTtsInput;
@@ -91,14 +96,10 @@ function checkIfTtsProcessing() {
   }
 }
 
-async function convertMp3BlobToJson(blob) {
+async function serializeMp3Blob(blob) {
   const dataArrayBuffer = await blob.arrayBuffer();
-  console.log(dataArrayBuffer);
   const dataUint8Array = new Uint8Array(dataArrayBuffer);
-  console.log(dataUint8Array);
   const dataArray = Array.from(dataUint8Array);
-  console.log(dataArray);
-
   return dataArray;
 }
 
@@ -112,11 +113,7 @@ let generatedFileBlob = null;
 let convertedData = null;
 let processingState = 'no';
 
-/* TODO: Fix listeners and messaging 
-  - important! saving a file is broken, it allows you to save a file with a correct name, but no data present, investigate the root of the issue and solve it
-  - uncaught promise error: could not stablish connection, receiving end does not exist in background.js if extension is not open, to my knowledge it does not affect the flow
-
-    TODO 2: Check if other languages are available, if yes, add the whole logic of handling lang choice (-_-) zzz
+/*  TODO 2: Check if other languages are available, if yes, add the whole logic of handling lang choice (-_-) zzz
 
     TODO 3: Add some styles (-_-) zzzzzzzzzzzzzzz
 */
@@ -146,7 +143,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return;
   }
 
-  console.log(convertedData);
+  console.log(ttsFilename);
   sendResponse({blob: convertedData, ttsFilename: ttsFilename });
 });
 

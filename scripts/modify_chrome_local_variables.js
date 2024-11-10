@@ -128,23 +128,6 @@ function addListenerForProcessUsIn(saveButton = null, playButton = null, generat
 }
 
 async function saveResultsToMp3(blob, ttsFilename) {
-    /*
-    const url = URL.createObjectURL(blob);
-    
-    chrome.downloads.download({
-        url: url,
-        filename: ttsFilename,
-        saveAs: true
-    }, (downloadId) => {
-        if (chrome.runtime.lastError) {
-            console.error("Error downloading file:", chrome.runtime.lastError);
-        } else {
-            console.log("Download initiated with ID:", downloadId);
-        }
-        URL.revokeObjectURL(url); // Clean up the URL regardless of success or failure
-    });
-    */
-
     const saveFileHandle = await window.showSaveFilePicker({
       suggestedName: ttsFilename,
         types: [{
@@ -153,10 +136,6 @@ async function saveResultsToMp3(blob, ttsFilename) {
         }]
     })
     const writableStream = await saveFileHandle.createWritable();
-
-    // mp3Blob = new Blob(blob, { type: 'audio/mp3' });
-    console.log("Blob size4: ", blob.size);
-    console.log("Blob type4: ", blob.type);
     
     if (!blob) {
         chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file', value: "no" });
