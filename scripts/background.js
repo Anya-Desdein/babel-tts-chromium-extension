@@ -74,7 +74,7 @@ function checkIfTtsProcessing() {
   if (processingState == "processing1") {
     processingState = "processing2";
 
-    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file', value: "processing" });
+    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: "processing" });
 
     if (previousTtsInput == savedTtsInput) {
       processingState = 'yes';
@@ -89,12 +89,12 @@ function checkIfTtsProcessing() {
   }
   
   if (processingState == "yes") {
-    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file', value: "yes" });
+    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: "yes" });
     return;
   }
 
   if (processingState == "no") {
-    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file', value: "no" });
+    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: "no" });
     return;
   }
 }
@@ -116,12 +116,11 @@ let generatedFileBlob = null;
 let convertedData = null;
 let processingState = 'no';
 
-/*  TODO 2: Check if other languages are available, if yes, add the whole logic of handling lang choice (-_-) zzz
-
-    TODO 3: Add some styles (-_-) zzzzzzzzzzzzzzz
+/*  TODO 1: Add icons, fonts, animations on save
+    TODO 2: Integrate with google cloud for text-to-text translation
 */
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (!(request.action === 'babel_tts_save_text_input')){
+  if (!(request.action === 'babel_tts_save_text_input_tts_openai')){
     return;
   }
 
@@ -138,7 +137,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (!(request.action == 'babel_tts_download_mp3')){
+  if (!(request.action == 'babel_tts_download_mp3_tts_openai')){
     return;
   }
 

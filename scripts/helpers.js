@@ -55,18 +55,18 @@ function changeStateButton(state, elementName) {
   document.getElementById(elementName).disabled = false;
 }
 
-function addListenerStateChangeFromBackground(saveButton = null, playButton = null, generateButton = null, loadingMsg = null) {
+function addListenerStateChangeFromBackground(saveButton = null, playButton = null, generateButton = null, textMsg = null) {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        if (!(request.action === 'babel_tts_start_generating_file')){
+        if (!(request.action === 'babel_tts_start_generating_file_tts_openai')){
             return;
         }
 
-        changeStateText(state, loadingMsg);
+        changeStateText(request.value, textMsg);
 
-        changeStateButton(state, generateButton);
+        changeStateButton(request.value, generateButton);
       
-        changeStateHiddenButton(state, saveButton);
-        changeStateHiddenButton(state, playButton);
+        changeStateHiddenButton(request.value, saveButton);
+        changeStateHiddenButton(request.value, playButton);
       });
 }
 
@@ -81,13 +81,13 @@ async function saveResultsToMp3(blob, ttsFilename) {
     const writableStream = await saveFileHandle.createWritable();
     
     if (!blob) {
-        chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file', value: "no" });
+        chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: "no" });
         return;
     }
 
     await writableStream.write( blob );
     await writableStream.close();
-    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file', value: "yes" });
+    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: "yes" });
   }
 
   function setWallpaperFromChromeLocalStorage() {
