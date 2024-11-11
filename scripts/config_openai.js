@@ -22,7 +22,7 @@ async function pickVoice() {
 }
 
 async function removeApiKeyFromLocalStorage() {
-    const removeApiKeyButton = document.getElementById('removeApiKeyButton');
+    const removeApiKeyButton = document.getElementById('removeApiKeySaveButton');
     const removeApiKeyStatusMessage = document.getElementById('removeApiKeyStatusMessage');
     
     removeApiKeyButton.addEventListener('click', async function() {
@@ -36,7 +36,7 @@ async function removeApiKeyFromLocalStorage() {
 }
 
 async function changeApiKeyLocalStorage() {
-    addListenerForApiKey("changeApiKeyInput", "changeApiKeyButton", null, "changeApiKeyStatusMessage");
+    addListenerForApiKey("changeApiKeyInput", "changeApiKeySaveButton", null, "changeApiKeyStatusMessage");
 }
 
 
@@ -50,9 +50,6 @@ async function waitForDom() {
         createRouterListener("returnHome", "home.html");
         createRouterListener("configHome", "config_home.html");
         removeApiKeyStatusMessage.textContent = `${resultApiKey} openai_config.html`;
-
-
-
 
         changeApiKeyLocalStorage();
         removeApiKeyFromLocalStorage();

@@ -15,7 +15,7 @@
     </nav>
     <main>
         <div>
-            <label for="pickVoice">Choose your TTS voice:</label>
+            <p class="multiHeader">Choose TTS voice:</p>
             <select id="pickVoice" name="options">
                 <option value="alloy">Alloy</option>
                 <option value="echo">Echo</option>
@@ -28,14 +28,14 @@
             <p id="pickVoiceStatusMessage"></p>
         </div>
         <div>
-            <h2>Change Current OpenAI API Key In Local Storage</h2>
+            <p class="multiHeader">Change OpenAI API Key</p>
             <input type="text" id="changeApiKeyOpenAiInput" placeholder="Enter new OpenAI API key" />
-            <button id="changeApiKeyOpenAiButton">Change</button>
+            <button id="changeApiKeyOpenAiSaveButton">Change</button>
             <p id="changeApiKeyOpenAiStatusMessage"></p>
         </div>
         <div>
-            <h2>Remove Current OpenAI API Key From Local Storage</h2>
-            <button id="removeApiKeyOpenAiButton">Remove</button>
+            <p class="multiHeader">Remove OpenAI API Key</p>
+            <button id="removeApiKeyOpenAiSaveButton">Remove</button>
             <p id="removeApiKeyOpenAiStatusMessage"></p>
         </div>
     </main>
