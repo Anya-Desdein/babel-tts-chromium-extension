@@ -74,3 +74,10 @@ async function saveResultsToMp3(blob, ttsFilename) {
     await writableStream.close();
     chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file', value: "yes" });
   }
+
+  function setWallpaperFromChromeLocalStorage() {
+    const savedWallpaper = localStorage.getItem('babel_tts_wallpaper');
+    if (savedWallpaper) {
+        document.documentElement.style.setProperty('--dynamic-background-image', `url(${savedWallpaper})`);
+    }
+  }

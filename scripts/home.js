@@ -77,6 +77,8 @@ function addListenerStartDownloadProcess() {
 
 async function waitForDom() {
     document.addEventListener('DOMContentLoaded', async function() {
+        setWallpaperFromChromeLocalStorage();
+
         const ttsInputSaveButtonOpenAi = document.getElementById('ttsInputSaveButtonOpenAi');
         const ttsInpuOpenAi = document.getElementById('ttsInputOpenAi');
         const ttsInputStatusMessageOpenAi = document.getElementById('ttsInputStatusMessageOpenAi');

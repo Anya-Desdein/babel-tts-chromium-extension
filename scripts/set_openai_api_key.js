@@ -1,5 +1,7 @@
 function waitForDom() {
     document.addEventListener('DOMContentLoaded', async function() {        
+        setWallpaperFromChromeLocalStorage();
+
         resultApiKey = await getFromLocalStorage('babel_tts_openai_apikey');
         if (resultApiKey) {
             window.location.href = 'home.html';
