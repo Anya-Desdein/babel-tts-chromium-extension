@@ -168,9 +168,16 @@ input::placeholder, textarea::placeholder {
     color: #6b5b5b;
 }
 
-nav {
-    margin: 0.4rem 0.4rem 0.1rem 0.4rem;
-    text-align: right;
+nav.multiButton {
+    box-sizing: border-box;
+    padding: 0.4rem 0.4rem 0.1rem 0.4rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+nav.multiButton > button{
+    min-width: 2.2rem;
 }
 
 main > * {
