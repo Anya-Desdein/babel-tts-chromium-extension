@@ -279,3 +279,17 @@ button, input[type="text"], input[type="password"], textarea, p {
     margin-left: auto;
     margin-right: auto;
 }
+
+/*WHY DO PEOPLE IN WEB DECIDED THAT IT"S GOOD IDEA TO OVERWRITE APPLICATION STYLES WITH IMPORTANT IN A WAY THAT CANNOT BE OVERWRITTEN BY A CODER*/
+#changeApiKeyOpenAiInput:-webkit-autofill,
+#changeApiKeyOpenAiInput:-webkit-autofill,
+#changeApiKeyOpenAiInput:-webkit-autofill,
+#ttsInputOpenAi:-webkit-autofill,
+#ttsInputOpenAi:-webkit-autofill,
+#ttsInputOpenAi:-webkit-autofill {
+    background-color: rgba(9, 4, 12, 0.33) !important;
+    color: #c2b5ab !important;
+    -webkit-text-fill-color: #c2b5ab !important;
+    box-shadow: 0 0 0px 1000px rgba(9, 4, 12, 0.33) inset !important;
+    /*transition: background-color 5000s ease-in-out 0s; */
+}
