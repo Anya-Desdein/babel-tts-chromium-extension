@@ -29,7 +29,7 @@ body::before {
     background-size: cover;
     background-position: center; 
     background-repeat: no-repeat;
-    opacity: 0.2;
+    opacity: 0.25;
     z-index: -1;
 }
 
@@ -96,14 +96,10 @@ button {
     -ms-transition: all 0.26s ease-in-out;
     -o-transition: all 0.26s ease-in-out;
     transition: all 0.26s ease-in-out;
-}
 
-button:not(:last-child) {
-    margin-left: 2rem;
-}
+    flex-basis: auto;
 
-button:not(:first-child) {
-    margin-right: 2rem;
+    margin-bottom: 0.33rem;
 }
 
 button:hover, button:active, button:focus {
@@ -173,14 +169,33 @@ input::placeholder, textarea::placeholder {
 }
 
 nav {
-    margin: 0.4rem;
+    margin: 0.4rem 0.4rem 0.1rem 0.4rem;
     text-align: right;
 }
 
 main > * {
     margin-top: 0.33rem;
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+
 }
 
 button, input[type="text"], input[type="password"], textarea, p {
     margin-top: 0.33rem;
+}
+
+.multiButton {
+    display: flex;
+    justify-content: space-between;
+    width: 92%;
+}
+
+.multiButton > button {
+    min-width: 8.8rem;
+    flex: 0 1 auto;
+}
+
+.wideButtonArea {
+    width: 100%;
 }
