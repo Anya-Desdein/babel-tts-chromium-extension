@@ -1,3 +1,9 @@
+function createRouterListener(elementId, pageHref) {
+  const routeButton = document.getElementById(elementId);    
+  routeButton.addEventListener('click', function() {
+      window.location.href = pageHref;
+  });
+}
 
 function addListenerForProcessUsIn(saveButton = null, playButton = null, generateButton = null, cogButton = null, loadingMsg = null) {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

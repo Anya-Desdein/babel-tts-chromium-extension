@@ -12,8 +12,25 @@ body {
     background: linear-gradient(to top, #200c17 0%, #110816 20% ,#110816 30%, #110816 80%, #040409 100%);
     box-shadow: inset 1.25em 1.25em 3.75em rgba(4, 4, 9, 0.2),
     inset -1.25em -1.25em 3.75em rgba(47, 40, 51, 0.2);
+
     color: #d8cbc2;
     text-align: center;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0; 
+    left: 0;
+    right: 0; 
+    bottom: 0;
+    background-image: url('themes/bg1.png');
+    background-size: cover;
+    background-position: center; 
+    background-repeat: no-repeat;
+    opacity: 0.2;
+    z-index: -1;
 }
 
 h1 {
@@ -156,7 +173,6 @@ input::placeholder, textarea::placeholder {
 }
 
 nav {
-    justify-content: flex-end;
     margin: 0.4rem;
     text-align: right;
 }
