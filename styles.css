@@ -72,7 +72,6 @@ button {
 
     border-radius: 0.33em;
     padding: 0.467rem 1.4rem;
-    margin: 0.467 0;
 
     cursor: pointer;
     -webkit-transition: all 0.26s ease-in-out;
@@ -80,6 +79,14 @@ button {
     -ms-transition: all 0.26s ease-in-out;
     -o-transition: all 0.26s ease-in-out;
     transition: all 0.26s ease-in-out;
+}
+
+button:not(:last-child) {
+    margin-left: 2rem;
+}
+
+button:not(:first-child) {
+    margin-right: 2rem;
 }
 
 button:hover, button:active, button:focus {
@@ -148,3 +155,16 @@ input::placeholder, textarea::placeholder {
     color: #6b5b5b;
 }
 
+nav {
+    justify-content: flex-end;
+    margin: 0.4rem;
+    text-align: right;
+}
+
+main > * {
+    margin-top: 0.33rem;
+}
+
+button, input[type="text"], input[type="password"], textarea, p {
+    margin-top: 0.33rem;
+}
