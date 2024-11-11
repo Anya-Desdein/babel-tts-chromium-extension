@@ -16,7 +16,7 @@
     <main>
         <div>
             <p class="multiHeader">Choose TTS voice:</p>
-            <select id="pickVoice" name="options">
+            <select id="pickVoiceOpenAi" name="options">
                 <option value="alloy">Alloy</option>
                 <option value="echo">Echo</option>
                 <option value="fable">Fable</option>
@@ -24,19 +24,19 @@
                 <option value="nova">Nova</option>
                 <option value="shimmer">Shimmer</option>
             </select>
-            <button id="pickVoiceSaveButton">Pick Voice</button>
-            <p id="pickVoiceStatusMessage"></p>
+            <button id="pickVoiceOpenAiSaveButton">Pick Voice</button>
+            <p id="pickVoiceOpenAiStatusMessage" class="errorMessage"></p>
         </div>
         <div>
             <p class="multiHeader">Change OpenAI API Key</p>
             <input type="text" id="changeApiKeyOpenAiInput" placeholder="Enter new OpenAI API key" />
             <button id="changeApiKeyOpenAiSaveButton">Change</button>
-            <p id="changeApiKeyOpenAiStatusMessage"></p>
+            <p id="changeApiKeyOpenAiStatusMessage" class="errorMessage"></p>
         </div>
         <div>
             <p class="multiHeader">Remove OpenAI API Key</p>
             <button id="removeApiKeyOpenAiSaveButton">Remove</button>
-            <p id="removeApiKeyOpenAiStatusMessage"></p>
+            <p id="removeApiKeyOpenAiStatusMessage" class="errorMessage"></p>
         </div>
     </main>
 </body>

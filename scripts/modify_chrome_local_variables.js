@@ -17,14 +17,14 @@ async function setToLocalStorage(key, value, errTarget=null) {
 
     if (!result) {
         if (errTarget) {
-            errTarget.textContent = "Something went wrong. Key not in local storage.";
+            errTarget.style.color = "rgb(164, 48, 48)";
+            errTarget.textContent = "Something went wrong. Element hasn't been saved.";
         }
         return key;
     }
 
-    if (errTarget) {
-        errTarget.textContent = `Value ${result} saved under key ${key}`;
-    }
+    errTarget.style.color = "rgb(70, 145, 103)";
+    errTarget.textContent = `Saved Successfully.`;
     return null;
 }
 
@@ -37,25 +37,28 @@ async function removeFromLocalStorage(key, errTarget=null) {
     }
 
     if (errTarget) {
-        errTarget.textContent = `Something went wrong. Value ${result} still exists under key ${key}`;
+        errTarget.textContent = `Something went wrong. Value ${result} still exists under key ${key}.`;
     }
     return key;
 }
 
-function addListenerForOpenAIApiKey(apiKeyOpenAiInputName, apiKeyOpenAiSaveButtonName, returnAddr=null , errTargetName=null) {
+function addListenerForApiKeyOpenAi(apiKeyOpenAiInputName, apiKeyOpenAiSaveButtonName, returnAddr=null , errTargetName=null) {
     const apiKeyOpenAiInput      = document.getElementById(apiKeyOpenAiInputName);
     const apiKeyOpenAiSaveButton = document.getElementById(apiKeyOpenAiSaveButtonName);
-    const errTarget        = document.getElementById(errTargetName);
+    const errTarget              = document.getElementById(errTargetName);
 
+    console.log(apiKeyOpenAiInput);
     apiKeyOpenAiSaveButton.addEventListener('click', async function() {
         const apiKey = apiKeyOpenAiInput.value;
         
         if (!apiKey.length) {
+            errTarget.style.color = "rgb(164, 48, 48)";
             errTarget.textContent = 'No input detected. OpenAI API key is a very long string starting with "sk-". \n Try with that one next time.';
             return;
         }
         
         if ((!apiKey.startsWith("sk-")) || (apiKey.length < 5)) {
+            errTarget.style.color = "rgb(164, 48, 48)";
             errTarget.textContent = 'This is not an API Key :< . OpenAI API key is a very long string starting with "sk-". \n Try with that one next time.';
             return;
         }

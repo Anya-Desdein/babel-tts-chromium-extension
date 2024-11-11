@@ -1,61 +1,68 @@
-async function pickVoice() {
-    const pickVoiceSaveButton = document.getElementById('pickVoiceSaveButton');
-    const pickVoiceStatusMessage = document.getElementById('pickVoiceStatusMessage');
+function pickVoiceOpenAIListener() {
+    const pickVoiceSaveButton = document.getElementById('pickVoiceOpenAiSaveButton');
+    const pickVoiceStatusMessage = document.getElementById('pickVoiceOpenAiStatusMessage');
 
     pickVoiceSaveButton.addEventListener('click', async function() {
-        let  pickVoice = document.getElementById('pickVoice');
-        pickVoice = pickVoice.value;
+        let  pickVoice = document.getElementById('pickVoiceOpenAi').value;
         
         if (!pickVoice.length) {
+            pickVoiceStatusMessage.style.color = "rgb(164, 48, 48)";
             pickVoiceStatusMessage.textContent = 'Something went wrong. No input detected.';
             return;
         }
         
         if (pickVoice == "alloy" || pickVoice == "echo" || pickVoice == "fable" || pickVoice == "onyx" || pickVoice == "nova" || pickVoice == "shimmer") {
-            pickVoiceStatusMessage.textContent = `You picked: ${pickVoice}`;
             await setToLocalStorage("babel_tts_openai_voice_name", pickVoice, pickVoiceStatusMessage);
             return;
         }
 
-        pickVoiceStatusMessage.textContent = `Incorrect value`;
+        pickVoiceStatusMessage.style.color = "rgb(164, 48, 48)";
+        pickVoiceStatusMessage.textContent = "Something went wrong. Incorrect input.";
     });
 }
 
-async function removeApiKeyFromLocalStorage() {
-    const removeApiKeyButton = document.getElementById('removeApiKeySaveButton');
-    const removeApiKeyStatusMessage = document.getElementById('removeApiKeyStatusMessage');
+function removeApiKeyOpenAIFromLocalStorageListener() {
+    const removeApiKeyButton = document.getElementById('removeApiKeyOpenAiSaveButton');
+    const removeApiKeyStatusMessage = document.getElementById('removeApiKeyOpenAiStatusMessage');
     
     removeApiKeyButton.addEventListener('click', async function() {
         const err = await removeFromLocalStorage("babel_tts_openai_apikey", removeApiKeyStatusMessage);
         if (!err) {
-            setTimeout(() => {
-                window.location.href = 'set_api_key.html';
-            }, 1000);
+            removeApiKeyStatusMessage.style.color = "rgb(70, 145, 103)";
+            removeApiKeyStatusMessage.textContent = `Key Removed.`;
+
+            const trickyAddApiKeyStatusMEssage = document.getElementById("changeApiKeyOpenAiStatusMessage");
+            trickyAddApiKeyStatusMEssage.style.color = "rgb(164, 48, 48)";
+            trickyAddApiKeyStatusMEssage.textContent = "No OpenAi Api Key, please add it here.";
         }
     });
 }
 
-async function changeApiKeyLocalStorage() {
-    addListenerForApiKey("changeApiKeyInput", "changeApiKeySaveButton", null, "changeApiKeyStatusMessage");
+function previewApiKeyOpenAi(resultApiKeyOpenAI) {
+    const ttsInputStatusMessageOpenAi = document.getElementById('changeApiKeyOpenAiStatusMessage');
+    if (!resultApiKeyOpenAI) {
+        ttsInputStatusMessageOpenAi.style.color = "rgb(164, 48, 48)";
+        ttsInputStatusMessageOpenAi.textContent = "No OpenAi Api Key, please add it here.";
+    } else {
+        ttsInputStatusMessageOpenAi.style.color = "rgb(70, 145, 103)";
+        ttsInputStatusMessageOpenAi.textContent = `${resultApiKeyOpenAI}`;
+    }
 }
-
 
 async function waitForDom() {
     document.addEventListener('DOMContentLoaded', async function() {
         setWallpaperFromChromeLocalStorage();
 
-        resultApiKey = await getFromLocalStorage('babel_tts_openai_apikey');
-        if (!resultApiKey) {
-            window.location.href = 'set_api_key.html';
-            return;
-        }
+        resultApiKeyOpenAI = await getFromLocalStorage('babel_tts_openai_apikey');
+        previewApiKeyOpenAi(resultApiKeyOpenAI);
+
         createRouterListener("returnHome", "home.html");
         createRouterListener("configHome", "config_home.html");
-        removeApiKeyStatusMessage.textContent = `${resultApiKey} openai_config.html`;
 
-        changeApiKeyLocalStorage();
-        removeApiKeyFromLocalStorage();
-        pickVoice();
+        addListenerForApiKeyOpenAi("changeApiKeyOpenAiInput", "changeApiKeyOpenAiSaveButton", null, "changeApiKeyOpenAiStatusMessage");
+        removeApiKeyOpenAIFromLocalStorageListener();
+
+        pickVoiceOpenAIListener();
     });
 }
 

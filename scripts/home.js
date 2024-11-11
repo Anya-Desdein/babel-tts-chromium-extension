@@ -1,7 +1,12 @@
 async function ttsService(apiKey, voiceName, saveButtonName, ttsInputName, ttsInputStatusMessageName) {
+    const ttsInputSaveButton = document.getElementById(saveButtonName);
+    const ttsInput = document.getElementById(ttsInputName);
+    const ttsInputStatusMessage = document.getElementById(ttsInputStatusMessageName);
+
     ttsInputSaveButton.addEventListener('click', async function() {
         const ttsText = ttsInput.value;
         if (!ttsText.length) {
+            ttsInputStatusMessage.style.color = "rgb(164, 48, 48)";
             ttsInputStatusMessage.textContent = 'No input detected.';
             return;
         }
@@ -21,9 +26,9 @@ async function ttsService(apiKey, voiceName, saveButtonName, ttsInputName, ttsIn
 }
 
 function addListenerForApiKey(apiKeyOpenAiInputName, apiKeySaveButtonName, returnAddr=null ,errTargetName=null) {
-    const apiKeyOpenAiInput      = document.getElementById(apiKeyOpenAiInputName);
+    const apiKeyOpenAiInput = document.getElementById(apiKeyOpenAiInputName);
     const apiKeySaveButton = document.getElementById(apiKeySaveButtonName);
-    const errTarget        = document.getElementById(errTargetName);
+    const errTarget = document.getElementById(errTargetName);
 
     apiKeySaveButton.addEventListener('click', async function() {
         const apiKey = apiKeyOpenAiInput.value;
@@ -61,7 +66,7 @@ function revertResponseToBlob(dataArray, mimeType = 'audio/mpeg') {
 }
 
 function addListenerStartDownloadProcess() {
-    saveButton = document.getElementById("ttsOutputSaveButton");
+    saveButton = document.getElementById("ttsOutputSaveButtonOpenAi");
     saveButton.addEventListener('click', async function() {
         chrome.runtime.sendMessage({ action: 'babel_tts_download_mp3', value: "download"}, (response) => {
             const receivedData = response.blob;
@@ -82,12 +87,16 @@ async function waitForDom() {
         const ttsInputSaveButtonOpenAi = document.getElementById('ttsInputSaveButtonOpenAi');
         const ttsInpuOpenAi = document.getElementById('ttsInputOpenAi');
         const ttsInputStatusMessageOpenAi = document.getElementById('ttsInputStatusMessageOpenAi');
-        resultApiKeyOpenAI = await getFromLocalStorage('babel_tts_openai_apikey');
 
+        resultApiKeyOpenAI = await getFromLocalStorage('babel_tts_openai_apikey');
         if (!resultApiKeyOpenAI) {
-            window.location.href = 'set_api_key.html';
+            changeStateText("noApiKey", 'ttsInputStatusMessageOpenAi');
+            changeStateButton("noApiKey", 'ttsInputSaveButtonOpenAi');
+          
+            changeStateHiddenButton("noApiKey", 'ttsOutputSaveButtonOpenAi');   
+            changeStateHiddenButton("noApiKey", 'ttsOutputPlayButtonOpenAi');
         }
-        
+
         resultVoice = await getFromLocalStorage('babel_tts_openai_voice_name');
         if (!resultVoice) {
             await setToLocalStorage("babel_tts_openai_voice_name", 'onyx');
@@ -99,7 +108,7 @@ async function waitForDom() {
         addListenerResizeTextArea("ttsInput");
 
         ttsService(resultApiKeyOpenAI, resultVoice, ttsInputSaveButtonOpenAi, ttsInpuOpenAi, ttsInputStatusMessageOpenAi);
-        addListenerForProcessUsIn(saveButton = "ttsOutputSaveButton", playButton = "ttsOutputPlayButton", generateButton = "ttsInputSaveButton", cogButton = "openAiConfig", loadingMsg = "ttsInputStatusMessage");
+        addListenerStateChangeFromBackground(saveButton = "ttsOutputSaveButtonOpenAi", playButton = "ttsOutputPlayButtonOpenAi", generateButton = "ttsInputSaveButtonOpenAi", loadingMsg = "ttsInputStatusMessage");
         addListenerStartDownloadProcess();
 
     });

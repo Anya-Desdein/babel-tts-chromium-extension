@@ -5,6 +5,7 @@ function getImageURL(fileName) {
 function isImage(fileName) {
     return /\.(jpg|jpeg|png|gif|svg)$/i.test(fileName);
 }
+
 async function createImageArray(themeList) {
     for (let i = 1; i <= 20; i++) {
         const imageName = "bg" + i + ".png";

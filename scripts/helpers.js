@@ -5,53 +5,68 @@ function createRouterListener(elementId, pageHref) {
   });
 }
 
-function addListenerForProcessUsIn(saveButton = null, playButton = null, generateButton = null, cogButton = null, loadingMsg = null) {
+function changeStateText(state, elementName) {
+  if (state == "no") {
+    document.getElementById(elementName).textContent = "";   
+    return;
+  }
+
+  if (state == "processing") {
+    document.getElementById(elementName).textContent = "Processing in Progress.";   
+    return;
+  }
+
+  if (state == "noApiKey") {
+    document.getElementById(elementName).textContent = "No OpenAi Api Key, please add it before generating";
+    return;
+  }
+
+  document.getElementById(elementName).textContent = "";
+}
+
+function changeStateHiddenButton(state, elementName) {
+  if (state == "no") {
+    document.getElementById(elementName).disabled = false;
+    document.getElementById(elementName).style.visibility = 'hidden'; 
+    return;
+  }
+
+  if (state == "processing" || state == "noApiKey") {
+    document.getElementById(elementName).disabled = true;
+    document.getElementById(elementName).style.visibility = 'visible';     
+    return;
+  }
+
+  document.getElementById(elementName).disabled = false;
+  document.getElementById(elementName).style.visibility = 'visible';  
+}
+
+function changeStateButton(state, elementName) {
+  if (state == "no") {
+    document.getElementById(elementName).disabled = false;
+    return;
+  }
+
+  if (state == "processing" || state == "noApiKey") {
+    document.getElementById(elementName).disabled = true;    
+    return;
+  }
+
+  document.getElementById(elementName).disabled = false;
+}
+
+function addListenerStateChangeFromBackground(saveButton = null, playButton = null, generateButton = null, loadingMsg = null) {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (!(request.action === 'babel_tts_start_generating_file')){
             return;
         }
+
+        changeStateText(state, loadingMsg);
+
+        changeStateButton(state, generateButton);
       
-        if (request.value == "no") {
-            document.getElementById(loadingMsg).textContent = "";
-
-            document.getElementById(saveButton).disabled = false;
-            document.getElementById(saveButton).style.visibility = 'hidden';
-    
-            document.getElementById(playButton).disabled = false;
-            document.getElementById(playButton).style.visibility = 'hidden';
-    
-            document.getElementById(generateButton).disabled = false;
-    
-            document.getElementById(cogButton).disabled = false;     
-            return;
-        }
-
-        if (request.value == "processing") {
-            document.getElementById(loadingMsg).textContent = "Processing in Progress.";
-    
-            document.getElementById(saveButton).disabled = true;
-            document.getElementById(saveButton).style.visibility = 'visible';
-    
-            document.getElementById(playButton).disabled = true;
-            document.getElementById(playButton).style.visibility = 'visible';
-
-            document.getElementById(generateButton).disabled = true;
-    
-            document.getElementById(cogButton).disabled = true;      
-            return;
-        }
-
-        document.getElementById(loadingMsg).textContent = "";
-
-        document.getElementById(saveButton).disabled = false;
-        document.getElementById(saveButton).style.visibility = 'visible';
-
-        document.getElementById(playButton).disabled = false;
-        document.getElementById(playButton).style.visibility = 'visible';
-
-        document.getElementById(generateButton).disabled = false;
-
-        document.getElementById(cogButton).disabled = false;    
+        changeStateHiddenButton(state, saveButton);
+        changeStateHiddenButton(state, playButton);
       });
 }
 
