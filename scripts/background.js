@@ -135,11 +135,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (!(request.action == 'babel_tts_download_file_tts_openai')){
+  if (!(request.action == 'babel_tts_request_file_tts_openai')){
     return;
   }
 
-  if (!(request.value == "download")) {
+  if (!(request.value == "request")) {
     return;
   }
   
