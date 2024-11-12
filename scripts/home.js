@@ -101,6 +101,7 @@ async function waitForDom() {
 
         ttsService(resultApiKeyOpenAI, resultVoice, "ttsInputSaveButtonOpenAi", "ttsInputOpenAi", "ttsInputStatusMessageOpenAi");
         addListenerChangeStateFromBackground(saveButton = "ttsOutputSaveButtonOpenAi", generateButton = "ttsInputSaveButtonOpenAi", textMsg = "ttsInputStatusMessageOpenAi", player = "ttsPlayerControls");
+        
         addListenerStartDownloadProcess();
     });
 }

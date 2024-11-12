@@ -135,14 +135,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (!(request.action == 'babel_tts_request_file_tts_openai')){
-    return;
-  }
-
-  if (!(request.value == "request")) {
+  if (!(request.action == 'babel_tts_request_file_tts_openai') || !(request.value == "request")){
     return;
   }
   
+  console.log(convertedData);
   sendResponse({blob: convertedData, ttsFilename: ttsFilename });
 });
 

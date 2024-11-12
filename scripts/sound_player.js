@@ -9,6 +9,8 @@ function playerToggle(elementName) {
 
 function updateAudioSource(audio, playerName) {
     const player = document.getElementById(playerName);
+    console.log("Type of player: ", player );
+    
     const source = player.querySelector("source");
 
     const audioUrl = URL.createObjectURL(audio);
@@ -19,12 +21,13 @@ function updateAudioSource(audio, playerName) {
     // audioPlayer.play();
 }
 
-function blobToObjectUrl(blob) {
+function addListenerBlobToObjectUrl(playerName) {
     chrome.runtime.sendMessage({ action: 'babel_tts_request_file_tts_openai', value: "request"}, (response) => {
         const receivedData = response.blob;
 
         // Due to serialization of sendMessage responses, blob has to be converted to array and then reverted
         const blob = revertResponseToBlob(receivedData);
+        console.log("Blob:", blob);
 
         updateAudioSource(blob, playerName);
     });

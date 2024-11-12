@@ -59,7 +59,7 @@ function changeStateHiddenButton(state, elementName) {
   element.style.visibility = 'visible';  
 }
 
-function setButtonStates(state, saveButton = null, generateButton = null, textMsg = null) {
+function setButtonStates(state, saveButton = null, generateButton = null, textMsg = null, player = null) {
   if (!state) {
     return;
   }
@@ -93,6 +93,7 @@ function addListenerChangeStateFromBackground(saveButton = null, generateButton 
         }
       
         setButtonStates(request.value, saveButton, generateButton, textMsg, player);
+        addListenerBlobToObjectUrl("ttsPlayerControls");
       });
 }
 
