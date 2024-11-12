@@ -23,8 +23,10 @@ async function setToLocalStorage(key, value, errTarget=null) {
         return key;
     }
 
-    errTarget.style.color = "rgb(70, 145, 103)";
-    errTarget.textContent = `Saved Successfully.`;
+    if (errTarget) {
+        errTarget.style.color = " #d8cbc2";
+        errTarget.textContent = `Saved Successfully.`;
+    }
     return null;
 }
 
@@ -64,6 +66,10 @@ function addListenerForApiKeyOpenAi(apiKeyOpenAiInputName, apiKeyOpenAiSaveButto
         }
 
         err = await setToLocalStorage('babel_tts_openai_apikey', apiKey, errTarget);
+        if (!err) {
+            sendStateToBackgroundWorker("no");
+        }
+
         if (!err && returnAddr) {
             window.location.href = returnAddr;
         }

@@ -56,8 +56,8 @@ async function waitForDom() {
 
     themeList = [];
     document.addEventListener('DOMContentLoaded', async function() {
-        createRouterListener("returnHome", "home.html");
-        createRouterListener("configHome", "config_home.html");
+        addListenerReroute("returnHome", "home.html");
+        addListenerReroute("configHome", "config_home.html");
 
         await createImageArray(themeList);
         addElementsToSelect(themeList, "pickWallpaper");

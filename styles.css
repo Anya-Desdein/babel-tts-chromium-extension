@@ -5,7 +5,9 @@ html, body {
     width: 20em;       
     height: 33em;  
     font-size: clamp(16px, 2.5vw, 4vw); 
-    overflow-y: auto;   
+    overflow-y: auto;
+    
+    text-decoration: none;
 }
 
 body {
@@ -280,16 +282,39 @@ button, input[type="text"], input[type="password"], textarea, p {
     margin-right: auto;
 }
 
-/*WHY DO PEOPLE IN WEB DECIDED THAT IT"S GOOD IDEA TO OVERWRITE APPLICATION STYLES WITH IMPORTANT IN A WAY THAT CANNOT BE OVERWRITTEN BY A CODER*/
-#changeApiKeyOpenAiInput:-webkit-autofill,
-#changeApiKeyOpenAiInput:-webkit-autofill,
-#changeApiKeyOpenAiInput:-webkit-autofill,
-#ttsInputOpenAi:-webkit-autofill,
-#ttsInputOpenAi:-webkit-autofill,
-#ttsInputOpenAi:-webkit-autofill {
-    background-color: rgba(9, 4, 12, 0.33) !important;
-    color: #c2b5ab !important;
-    -webkit-text-fill-color: #c2b5ab !important;
-    box-shadow: 0 0 0px 1000px rgba(9, 4, 12, 0.33) inset !important;
-    /*transition: background-color 5000s ease-in-out 0s; */
+/* Change Autocomplete styles*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+select:-webkit-autofill:active {
+    border-radius: 0.33em;
+    border: 2px solid #231d27;
+    -webkit-box-shadow: 0 0 16px 8px #110816 inset,
+    0 0 0px 1000px #a43030 inset !important;; 
+
+    text-shadow:
+    0 0 0.1em rgb(224, 164, 123),
+    0 0 0.1em rgba(224, 164, 123),
+    0 0 0.1em rgba(224, 164, 123),
+    0 0 0.1em rgba(224, 164, 123),
+
+    0 0 0.2em rgba(224, 164, 123, 0.3),
+    0 0 0.2em rgba(224, 164, 123, 0.3),
+    0 0 0.2em rgba(224, 164, 123, 0.3),
+    0 0 0.2em rgba(224, 164, 123, 0.3),
+
+    0 0 0.5em rgba(164, 48, 48, 1),
+    0 0 0.5em rgba(164, 48, 48, 1),
+    0 0 0.5em rgba(164, 48, 48, 1),
+    0 0 0.5em rgba(164, 48, 48, 1) !important;
+
+    transition: all 50000s ease-in-out 0s !important;
 }

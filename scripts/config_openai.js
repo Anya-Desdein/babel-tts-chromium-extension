@@ -28,12 +28,14 @@ function removeApiKeyOpenAIFromLocalStorageListener() {
     removeApiKeyButton.addEventListener('click', async function() {
         const err = await removeFromLocalStorage("babel_tts_openai_apikey", removeApiKeyStatusMessage);
         if (!err) {
-            removeApiKeyStatusMessage.style.color = "rgb(70, 145, 103)";
+            removeApiKeyStatusMessage.style.color = "#d8cbc2";
             removeApiKeyStatusMessage.textContent = `Key Removed.`;
 
             const trickyAddApiKeyStatusMEssage = document.getElementById("changeApiKeyOpenAiStatusMessage");
             trickyAddApiKeyStatusMEssage.style.color = "rgb(164, 48, 48)";
             trickyAddApiKeyStatusMEssage.textContent = "No OpenAi Api Key, please add it here.";
+            
+            sendStateToBackgroundWorker("noApiKey");
         }
     });
 }
@@ -44,7 +46,7 @@ function previewApiKeyOpenAi(resultApiKeyOpenAI) {
         ttsInputStatusMessageOpenAi.style.color = "rgb(164, 48, 48)";
         ttsInputStatusMessageOpenAi.textContent = "No OpenAi Api Key, please add it here.";
     } else {
-        ttsInputStatusMessageOpenAi.style.color = "rgb(70, 145, 103)";
+        ttsInputStatusMessageOpenAi.style.color = " #d8cbc2";
         ttsInputStatusMessageOpenAi.textContent = `${resultApiKeyOpenAI}`;
     }
 }
@@ -56,8 +58,8 @@ async function waitForDom() {
         resultApiKeyOpenAI = await getFromLocalStorage('babel_tts_openai_apikey');
         previewApiKeyOpenAi(resultApiKeyOpenAI);
 
-        createRouterListener("returnHome", "home.html");
-        createRouterListener("configHome", "config_home.html");
+        addListenerReroute("returnHome", "home.html");
+        addListenerReroute("configHome", "config_home.html");
 
         addListenerForApiKeyOpenAi("changeApiKeyOpenAiInput", "changeApiKeyOpenAiSaveButton", null, "changeApiKeyOpenAiStatusMessage");
         removeApiKeyOpenAIFromLocalStorageListener();

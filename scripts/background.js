@@ -13,7 +13,7 @@ async function sendRequestToOpenai(text, apiKey, voiceName) {
           })
       })
       if (!response.ok) {
-        processingState = "no";
+        processingState = "noApiKey";
         throw new Error(`Invalid Response. Response: ${response} Status Ok: ${response.ok}`);
       }else {
         generatedFileBlob = await response.blob();
@@ -71,6 +71,11 @@ function createDynamicFilename(text) {
 };
 
 function checkIfTtsProcessing() {
+  if (processingState == "noApiKey" || processingState == "no" || processingState == "yes") {
+    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: processingState });
+    return;
+  }
+
   if (processingState == "processing1") {
     processingState = "processing2";
 
@@ -85,16 +90,6 @@ function checkIfTtsProcessing() {
 
     previousTtsInput = savedTtsInput;
     sendRequestToOpenai(savedTtsInput, msgApiKey, msgVoiceName);
-    return;
-  }
-  
-  if (processingState == "yes") {
-    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: "yes" });
-    return;
-  }
-
-  if (processingState == "no") {
-    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: "no" });
     return;
   }
 }
@@ -116,6 +111,8 @@ let generatedFileBlob = null;
 let convertedData = null;
 let processingState = 'no';
 
+const allowedProcessingStates = ['processing1', 'processing2', 'yes', 'no', 'noApiKey'];
+
 /*  TODO 1: Add icons, fonts, animations on save
     TODO 2: Integrate with google cloud for text-to-text translation
 */
@@ -128,6 +125,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ status: `missing content in ${JSON.stringify(request)}` });
     return;
   }
+  
   sendResponse({ status: 'success' });
 
   processingState = "processing1";
@@ -137,15 +135,34 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (!(request.action == 'babel_tts_download_mp3_tts_openai')){
+  if (!(request.action == 'babel_tts_download_file_tts_openai')){
     return;
   }
 
   if (!(request.value == "download")) {
     return;
   }
-
+  
   sendResponse({blob: convertedData, ttsFilename: ttsFilename });
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (!(request.action == 'babel_tts_change_key_state_tts_openai')){
+    return;
+  }
+
+  if (!allowedProcessingStates.includes(request.value)) {
+    return;
+  }
+
+  if (request.value == "processing") {
+    processingState = "processing1";
+    sendResponse({response: "ok"});
+    return;
+  }
+
+  processingState = request.value;
+  sendResponse({response: "ok"});
 });
 
 
