@@ -59,7 +59,7 @@ function changeStateHiddenButton(state, elementName) {
   element.style.visibility = 'visible';  
 }
 
-function setButtonStates(state, saveButton = null, generateButton = null, textMsg = null, player = null) {
+function setButtonStates(state, saveButton = null, generateButton = null, textMsg = null, player = null, blobExists = false) {
   if (!state) {
     return;
   }
@@ -77,11 +77,11 @@ function setButtonStates(state, saveButton = null, generateButton = null, textMs
   }
 
   if (player) {
-      playerToggle(player);
+      playerToggle(player, blobExists);
   }
 }
 
-function addListenerChangeStateFromBackground(saveButton = null, generateButton = null, textMsg = null, player = null) {
+function addListenerChangeStateFromBackground(saveButton = null, generateButton = null, textMsg = null, player = null, blobExists = false) {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (!(request.action === 'babel_tts_start_generating_file_tts_openai')){
             return;
@@ -92,12 +92,12 @@ function addListenerChangeStateFromBackground(saveButton = null, generateButton 
           return;
         }
       
-        setButtonStates(request.value, saveButton, generateButton, textMsg, player);
-        addListenerBlobToObjectUrl("ttsPlayerControls");
+        setButtonStates(request.value, saveButton, generateButton, textMsg, player, blobExists);
+        askForBlobToObjectUrl("ttsPlayerControls");
       });
 }
 
-function sendStateToBackgroundWorker(state, saveButton = null, generateButton = null, textMsg = null, player = null) {
-  setButtonStates(state, saveButton, generateButton, textMsg, player);
+function sendStateToBackgroundWorker(state, saveButton = null, generateButton = null, textMsg = null, player = null, blobExists = false) {
+  setButtonStates(state, saveButton, generateButton, textMsg, player, blobExists);
   chrome.runtime.sendMessage({ action: 'babel_tts_change_key_state_tts_openai', value: state });
 }
