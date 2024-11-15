@@ -1,4 +1,4 @@
-class mp3BlobElement {
+class Mp3BlobElement {
   constructor(serializedBlob = '', name = '', size = '', estimatedPrice = 0, realPrice = 0, isUsed = false, isAvailable = false, number = 0) {
     this.serializedBlob = serializedBlob;
     this.name = name;
@@ -94,14 +94,13 @@ class mp3BlobElement {
 // 3 generations are stored max at once. 
 // If all slots are already taken, the one replaced will be the one that isn't being played, one with the lowest number (oldest). 
 // If none slots are already taken, the one used will be the one with the lowest number. 
-const firstMp3BlobElement = new mp3BlobElement();
-const secondMp3BlobElement = new mp3BlobElement();
-const thirdtMp3BlobElement = new mp3BlobElement();
-
+const firstMp3BlobElement = new Mp3BlobElement();
+const secondMp3BlobElement = new Mp3BlobElement();
+const thirdtMp3BlobElement = new Mp3BlobElement();
 const mp3BlobElementList = [firstMp3BlobElement, secondMp3BlobElement, thirdtMp3BlobElement];
 
 async function replaceMp3BlobElement(blob) {     
-  const newMp3BlobElement = new mp3BlobElement();
+  const newMp3BlobElement = new Mp3BlobElement();
   // Due to serialization of sendMessage responses, blob has to be converted to array and then reverted
   newMp3BlobElement.setSerializedBlob(blob);
   newMp3BlobElement.setName(ttsFilename);
@@ -119,7 +118,7 @@ function findSlotForNewMp3BlobElement(mp3BlobElementList, newMp3BlobElement) {
   for (let i = 0; i < len; i++) {
     if (!mp3BlobElementList[i].serializedBlob) {
       mp3BlobElementList[i].copyFrom(newMp3BlobElement);
-      setNumber(i);
+      mp3BlobElementList[i].setNumber(i);
       return i;
     }
   }
@@ -127,7 +126,7 @@ function findSlotForNewMp3BlobElement(mp3BlobElementList, newMp3BlobElement) {
   for (let i = 0; i < len; i++) {
     if (!mp3BlobElementList[i].isUsed) {
       mp3BlobElementList[i].copyFrom(newMp3BlobElement);
-      setNumber(i);
+      mp3BlobElementList[i].setNumber(i);
       return i;
     }
   }
@@ -151,25 +150,13 @@ async function sendTtsReqOpenAi(text, apiKey, voiceName="onyx" , modelName="tts-
 }
 
 async function analyzeTtsResponseOpenAi(text, apiKey, voiceName, modelName="tts-1") {
-    /*
-    console.log("text: ", text);
-    console.log("apiKey: ", apiKey);
-    console.log("voiceName: ", voiceName);
-    const response = await sendTtsReqOpenAi(text, apiKey, voiceName, modelName);
-    */
+  /*
+  console.log("text: ", text);
+  console.log("apiKey: ", apiKey);
+  console.log("voiceName: ", voiceName); 
+  */
     try {
-      const response = await fetch("https://api.openai.com/v1/audio/speech", {
-          method: "POST",
-          headers: {
-              "Authorization": `Bearer ${apiKey}`,
-              "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-              model: modelName,
-              voice: voiceName,
-              input: text
-          })
-      })
+      const response = await sendTtsReqOpenAi(text, apiKey, voiceName, modelName);
     if (!response.ok) {
       processingState = "noApiKey";
       throw new Error(`Invalid Response. Response: ${response} Status Ok: ${response.ok}`);
@@ -180,7 +167,6 @@ async function analyzeTtsResponseOpenAi(text, apiKey, voiceName, modelName="tts-
   } catch (error) {
       processingState = "no";
       console.error("Error generating TTS:", error);
-      document.getElementById("ttsInputStatusMessage").textContent = `Failed to generate. Error: ${error}`;
   }
 }
 
@@ -287,6 +273,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return;
   }
 
+  if (!firstMp3BlobElement.serializedBlob) {
+    return;
+  }
+
+  
   console.log(firstMp3BlobElement.serializedBlob);
   console.log(firstMp3BlobElement.name);
 
