@@ -12,18 +12,15 @@ function addListenerReroute(elementName, pageHref) {
   });
 }
 
-async function saveBlobToMp3(blob, ttsFilename) {
-    const saveFileHandle = await window.showSaveFilePicker({
-      suggestedName: ttsFilename,
-        types: [{
-          description: "Audio Files",
-          accept: { "audio/mpeg": [".mp3"] }
-        }]
-    })
-    const writableStream = await saveFileHandle.createWritable();
+function addListenerResizeTextArea(textAreaId) {
+  const textarea = document.getElementById(textAreaId);
 
-    await writableStream.write(blob);
-    await writableStream.close();
+  textarea.addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = this.scrollHeight + 'px';
+  });
+}
 
-    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: "yes" });
-  }
+function generateUniqueId() {
+  return `process-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}

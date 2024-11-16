@@ -1,12 +1,8 @@
 class Mp3BlobElement {
-  constructor(serializedBlob = '', name = '', size = '', estimatedPrice = 0, realPrice = 0, isUsed = false, isAvailable = false, number = 0) {
+  constructor(serializedBlob = '', isUsed = false, name = '', number = 0) {
     this.serializedBlob = serializedBlob;
-    this.name = name;
-    this.size = size;
-    this.estimatedPrice = estimatedPrice;
-    this.realPrice = realPrice;
-    this.isUsed = isUsed;  
-    this.isAvailable = isAvailable;
+    this.isUsed = isUsed; 
+    this.name = name; 
     this.number = number;
   }
 
@@ -21,49 +17,16 @@ class Mp3BlobElement {
 
     this.serializedBlob = dataArray;
   } 
-
   copyFrom(other) {
     if (!(other instanceof Mp3BlobElement)) {
       return;
     }
 
     this.serializedBlob = other.serializedBlob;
-    this.name = other.name;
-    this.size = other.size;
-    this.estimatedPrice = other.estimatedPrice;
-    this.realPrice = other.realPrice;
     this.isUsed = other.isUsed;
-    this.isAvailable = other.isAvailable;
+    this.name = other.name;
     this.number = other.number;
   }
-  setName(name) {
-    if (!name) {
-      return;
-    }
-
-    this.name = name;
-  } 
-  setSize(size) {
-    if (!size) {
-      return;
-    }
-
-    this.size = size;
-  } 
-  setEstimatedPrice(estimatedPrice) {
-    if (!estimatedPrice) {
-      return;
-    }
-
-    this.estimatedPrice = estimatedPrice;
-  } 
-  setRealPrice(realPrice) {
-    if (!realPrice) {
-      return;
-    }
-
-    this.realPrice = realPrice;
-  } 
   setUsage(isCurrentlyUsed) {
     if (!isCurrentlyUsed) {
       return;
@@ -71,12 +34,12 @@ class Mp3BlobElement {
 
     this.isUsed = isCurrentlyUsed;
   } 
-  setAvailability(isAvailable) {
-    if (!isAvailable) {
+  setName(name) {
+    if (!name) {
       return;
     }
 
-    this.isAvailable = isAvailable;
+    this.name = name;
   } 
   setNumber(number) {
     if (!number) {
@@ -103,14 +66,13 @@ async function replaceMp3BlobElement(blob) {
   const newMp3BlobElement = new Mp3BlobElement();
   // Due to serialization of sendMessage responses, blob has to be converted to array and then reverted
   newMp3BlobElement.setSerializedBlob(blob);
-  newMp3BlobElement.setName(ttsFilename);
 
-  const replacementState = findSlotForNewMp3BlobElement(mp3BlobElementList, newMp3BlobElement);
-  if (!replacementState) {
+  const elementNumber = findSlotForNewMp3BlobElement(mp3BlobElementList, newMp3BlobElement);
+  if (!elementNumber) {
     return;
   }
 
-  sendMessageNewMp3BlobElementAvailable(state="newFileAvailable", mp3BlobElementList[replacementState]);
+  sendMessageNewMp3BlobElementAvailable(state="newFileAvailable", newMp3BlobElement);
 }
 
 function findSlotForNewMp3BlobElement(mp3BlobElementList, newMp3BlobElement) {
@@ -118,6 +80,7 @@ function findSlotForNewMp3BlobElement(mp3BlobElementList, newMp3BlobElement) {
   for (let i = 0; i < len; i++) {
     if (!mp3BlobElementList[i].serializedBlob) {
       mp3BlobElementList[i].copyFrom(newMp3BlobElement);
+      mp3BlobElementList[i].setName(ttsFilename);
       mp3BlobElementList[i].setNumber(i);
       return i;
     }
@@ -126,6 +89,7 @@ function findSlotForNewMp3BlobElement(mp3BlobElementList, newMp3BlobElement) {
   for (let i = 0; i < len; i++) {
     if (!mp3BlobElementList[i].isUsed) {
       mp3BlobElementList[i].copyFrom(newMp3BlobElement);
+      mp3BlobElementList[i].setName(ttsFilename);
       mp3BlobElementList[i].setNumber(i);
       return i;
     }
@@ -170,19 +134,15 @@ async function analyzeTtsResponseOpenAi(text, apiKey, voiceName, modelName="tts-
   }
 }
 
-function sendMessageNewMp3BlobElementAvailable(stateReq) {
+function sendMessageNewMp3BlobElementAvailable(stateReq, mp3BlobElementToSend) {
   response = {
-    state: stateReq
+    state: stateReq,
+    serializedBlob: mp3BlobElementToSend.serializedBlob, 
+    isUsed: mp3BlobElementToSend.isUsed, 
+    name: mp3BlobElementToSend.name, 
+    number: mp3BlobElementToSend.number
   }
-  chrome.runtime.sendMessage({ action: 'babel_tts_change_key_state_tts_openai', value: ""}, (response) => {
-    const receivedData = response.blob;
-
-    // Due to serialization of sendMessage responses, blob has to be converted to array and then reverted
-    const blob = revertResponseToBlob(receivedData);
-    console.log("Blob:", blob);
-
-    updateAudioSource(blob, playerName);
-});
+  chrome.runtime.sendMessage({ action: 'babel_tts_change_key_state_tts_openai', value: response});
 }
 
 function createDynamicFilename(text) {
@@ -225,6 +185,7 @@ function createDynamicFilename(text) {
   return modified_text;
 }
 
+/*
 function checkIfTtsProcessing() {
   if (processingState == "noApiKey" || processingState == "no" || processingState == "yes") {
     chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: processingState });
@@ -248,7 +209,7 @@ function checkIfTtsProcessing() {
     return;
   }
 }
-
+*/
 
 let previousTtsInput = '';
 let currentTtsInput = '';
@@ -261,11 +222,13 @@ let generatedFileBlob = null;
 let convertedData = null;
 let processingState = 'no';
 
-const allowedProcessingStates = ['processing1', 'processing2', 'yes', 'no', 'noApiKey'];
+// const allowedProcessingStates = ['processing1', 'processing2', 'yes', 'no', 'noApiKey'];
 
 /*  TODO 1: Add icons, fonts, animations on save
     TODO 2: Integrate with google cloud for text-to-text translation
 */
+
+/* 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (!(request.action === 'babel_tts_save_text_input_tts_openai')){
     return;
@@ -318,19 +281,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   processingState = request.value;
   sendResponse({response: "ok"});
 });
+*/
+
 
 async function initOffscreenDocument() {
   const hasOffscreen = await chrome.offscreen.hasDocument();
   if (hasOffscreen) {
     console.log("Offscreen document already exists.");
-  }else {
-    await chrome.offscreen.createDocument({
-      url: "offscreen.html",
-      reasons: ["AUDIO_PLAYBACK"],
-      justification: "Required for audio processing."
-    });
-    console.log("Offscreen document created.");
+    return;
   }
+  
+  await chrome.offscreen.createDocument({
+    url: "offscreen.html",
+    reasons: ["AUDIO_PLAYBACK"],
+    justification: "Required for audio processing."
+  });
+  console.log("Offscreen document created."); 
 }
 
 const interval = 2000;
