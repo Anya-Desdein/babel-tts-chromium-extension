@@ -25,7 +25,7 @@ async function ttsService(apiKey, voiceName, saveButtonName, ttsInputName, ttsIn
     });
 }
 
-function addListenerForApiKey(apiKeyOpenAiInputName, apiKeySaveButtonName, returnAddr=null ,errTargetName=null) {
+function addListenerForApiKey(apiKeyOpenAiInputName, apiKeySaveButtonName, returnAddr=null, errTargetName=null) {
     const apiKeyOpenAiInput = document.getElementById(apiKeyOpenAiInputName);
     const apiKeySaveButton = document.getElementById(apiKeySaveButtonName);
     const errTarget = document.getElementById(errTargetName);

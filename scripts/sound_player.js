@@ -10,7 +10,7 @@ function playerToggle(elementName, blobExists) {
 
 function updateAudioSource(audio, playerName) {
     const player = document.getElementById(playerName);
-    console.log("Type of player: ", player );
+    console.log("Type of player: ", player);
     
     const source = player.querySelector("source");
 

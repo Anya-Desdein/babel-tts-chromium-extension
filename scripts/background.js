@@ -110,7 +110,7 @@ async function replaceMp3BlobElement(blob) {
     return;
   }
 
-  sendMessageNewMp3BlobElementAvailable(mp3BlobElementList[replacementState]);
+  sendMessageNewMp3BlobElementAvailable(state="neFileAvailable", mp3BlobElementList[replacementState]);
 }
 
 function findSlotForNewMp3BlobElement(mp3BlobElementList, newMp3BlobElement) {
@@ -168,6 +168,21 @@ async function analyzeTtsResponseOpenAi(text, apiKey, voiceName, modelName="tts-
       processingState = "no";
       console.error("Error generating TTS:", error);
   }
+}
+
+function sendMessageNewMp3BlobElementAvailable(stateReq) {
+  response = {
+    state: stateReq
+  }
+  chrome.runtime.sendMessage({ action: 'babel_tts_change_key_state_tts_openai', value: ""}, (response) => {
+    const receivedData = response.blob;
+
+    // Due to serialization of sendMessage responses, blob has to be converted to array and then reverted
+    const blob = revertResponseToBlob(receivedData);
+    console.log("Blob:", blob);
+
+    updateAudioSource(blob, playerName);
+});
 }
 
 function createDynamicFilename(text) {
@@ -233,6 +248,7 @@ function checkIfTtsProcessing() {
     return;
   }
 }
+
 
 let previousTtsInput = '';
 let currentTtsInput = '';

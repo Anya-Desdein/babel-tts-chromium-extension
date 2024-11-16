@@ -9,7 +9,10 @@
     "48": "img/logo_48.png",
     "128": "img/logo_128.png"
   },
-  "permissions": ["storage"],
+  "permissions": [
+    "storage",
+    "offscreen"
+  ],
   "action": {
     "default_popup": "home.html"
   },
