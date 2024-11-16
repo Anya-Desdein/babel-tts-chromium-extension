@@ -319,5 +319,28 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   sendResponse({response: "ok"});
 });
 
+async function ensureOffscreenDocument() {
+  const hasOffscreen = await chrome.offscreen.hasDocument();
+  if (!hasOffscreen) {
+    await chrome.offscreen.createDocument({
+      url: "offscreen.html",
+      reasons: ["AUDIO_PLAYBACK"],
+      justification: "Required for audio processing."
+    });
+    console.log("Offscreen document created.");
+  } else {
+    console.log("Offscreen document already exists.");
+  }
+}
+
+chrome.runtime.onInstalled.addListener(() => {
+  ensureOffscreenDocument();
+});
+
+
 const interval = 2000;
 setInterval(checkIfTtsProcessing, interval);
+// const intervalOffscreen = 20000;
+// setInterval(checkIfTtsProcessing, intervalOffscreen);
+
+ensureOffscreenDocument();

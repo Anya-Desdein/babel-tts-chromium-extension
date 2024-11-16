@@ -51,21 +51,19 @@ function previewApiKeyOpenAi(resultApiKeyOpenAI) {
     }
 }
 
-async function waitForDom() {
-    document.addEventListener('DOMContentLoaded', async function() {
-        setWallpaperFromChromeLocalStorage();
+async function start() {
+    setWallpaperFromChromeLocalStorage();
 
-        resultApiKeyOpenAI = await getFromLocalStorage('babel_tts_openai_apikey');
-        previewApiKeyOpenAi(resultApiKeyOpenAI);
+    resultApiKeyOpenAI = await getFromLocalStorage('babel_tts_openai_apikey');
+    previewApiKeyOpenAi(resultApiKeyOpenAI);
 
-        addListenerReroute("returnHome", "home.html");
-        addListenerReroute("configHome", "config_home.html");
+    addListenerReroute("returnHome", "home.html");
+    addListenerReroute("configHome", "config_home.html");
 
-        addListenerForApiKeyOpenAi("changeApiKeyOpenAiInput", "changeApiKeyOpenAiSaveButton", null, "changeApiKeyOpenAiStatusMessage");
-        removeApiKeyOpenAIFromLocalStorageListener();
+    addListenerForApiKeyOpenAi("changeApiKeyOpenAiInput", "changeApiKeyOpenAiSaveButton", null, "changeApiKeyOpenAiStatusMessage");
+    removeApiKeyOpenAIFromLocalStorageListener();
 
-        pickVoiceOpenAIListener();
-    });
+    pickVoiceOpenAIListener();
 }
 
-waitForDom()
+start()

@@ -51,7 +51,7 @@ function addListenerForThemeChange(themeList) {
     });
 }
 
-async function waitForDom() {
+async function start() {
     setWallpaperFromChromeLocalStorage();
 
     themeList = [];
@@ -65,4 +65,4 @@ async function waitForDom() {
     });
 }
 
-waitForDom();
+start();
