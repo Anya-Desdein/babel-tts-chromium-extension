@@ -110,7 +110,7 @@ async function replaceMp3BlobElement(blob) {
     return;
   }
 
-  sendMessageNewMp3BlobElementAvailable(state="neFileAvailable", mp3BlobElementList[replacementState]);
+  sendMessageNewMp3BlobElementAvailable(state="newFileAvailable", mp3BlobElementList[replacementState]);
 }
 
 function findSlotForNewMp3BlobElement(mp3BlobElementList, newMp3BlobElement) {
@@ -319,28 +319,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   sendResponse({response: "ok"});
 });
 
-async function ensureOffscreenDocument() {
+async function initOffscreenDocument() {
   const hasOffscreen = await chrome.offscreen.hasDocument();
-  if (!hasOffscreen) {
+  if (hasOffscreen) {
+    console.log("Offscreen document already exists.");
+  }else {
     await chrome.offscreen.createDocument({
       url: "offscreen.html",
       reasons: ["AUDIO_PLAYBACK"],
       justification: "Required for audio processing."
     });
     console.log("Offscreen document created.");
-  } else {
-    console.log("Offscreen document already exists.");
   }
 }
 
-chrome.runtime.onInstalled.addListener(() => {
-  ensureOffscreenDocument();
-});
-
-
 const interval = 2000;
 setInterval(checkIfTtsProcessing, interval);
-// const intervalOffscreen = 20000;
-// setInterval(checkIfTtsProcessing, intervalOffscreen);
 
-ensureOffscreenDocument();
+chrome.runtime.onInstalled.addListener(() => {
+  initOffscreenDocument();
+});
