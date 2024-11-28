@@ -53,19 +53,21 @@ function previewApiKeyOpenAiOld(resultApiKeyOpenAI) {
 
 function previewApiKeyOpenAi(resultApiKeyOpenAI) {
     const hiddenTextField = document.getElementById("hiddenTextContainerAreaApiKey");
-    const hiddenTextButton = document.getElementsByClassName("hiddenTextContainerButton")[0];
-    const hiddenTextButtonIcon = document.getElementsByClassName("hiddenTextContainerButtonIcon")[0];
+    const hiddenTextButton = document.getElementById("hiddenTextContainerButtonApiKey");
+    const hiddenTextButtonIcon = document.getElementById("hiddenTextContainerButtonApiKey");
 
     if (!resultApiKeyOpenAI) {
         hiddenTextField.value = "No OpenAi Api Key.";
         resizeTextArea(hiddenTextField);
         hiddenTextButton.classList.add('missing');
+        hiddenTextField.classList.add("missing");
     }
 
     if (resultApiKeyOpenAI) { 
         hiddenTextField.value = [...resultApiKeyOpenAI].map(char => "*").join('');
         resizeTextArea(hiddenTextField);
         hiddenTextButton.classList.remove("missing");
+        hiddenTextField.classList.remove("missing");
     }
 
     hiddenTextButton.addEventListener("click", function () {
@@ -92,7 +94,7 @@ async function start() {
 
     addListenerResizeTextArea("changeApiKeyOpenAiInput");
 
-    addListenerForApiKeyOpenAi("changeApiKeyOpenAiInput", "changeApiKeyOpenAiSaveButton", null, "hiddenTextApiKey");
+    addListenerForApiKeyOpenAi("changeApiKeyOpenAiInput", "changeApiKeyOpenAiSaveButton", null, "changeApiKeyOpenAiStatusMessage");
     removeApiKeyOpenAIFromLocalStorageListener();
 
     pickVoiceOpenAIListener();

@@ -341,12 +341,29 @@ select:-webkit-autofill:active {
     pointer-events: auto;
 }
 
-.hiddenTextContainerArea {
+.hiddenTextContainerArea, 
+.hiddenTextContainerArea:focus {
     color: #9c4b4a;
+    border: 2px solid rgba(204, 204, 204, 0.1);
+
+    cursor: auto;
+    pointer-events: auto;
+
+    -webkit-transition: all 0.26s ease-in-out;
+    -moz-transition: all 0.26s ease-in-out;
+    -ms-transition: all 0.26s ease-in-out;
+    -o-transition: all 0.26s ease-in-out;
+    transition: all 0.26s ease-in-out;
 }
 
-.hiddenTextContainerArea.visible {
+.hiddenTextContainerArea.visible, 
+.hiddenTextContainerArea.visible:focus {
     color: #978580;
+}
+
+.hiddenTextContainerArea.missing {
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 .hiddenTextContainerButton {

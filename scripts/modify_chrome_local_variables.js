@@ -17,7 +17,7 @@ async function setToLocalStorage(key, value, errTarget=null) {
 
     if (!result) {
         if (errTarget) {
-            errTarget.style.color = "rgb(164, 48, 48)";
+            errTarget.style.color = "#9c4b4a";
             errTarget.textContent = "Something went wrong. Element hasn't been saved.";
         }
         return key;
@@ -54,13 +54,13 @@ function addListenerForApiKeyOpenAi(apiKeyOpenAiInputName, apiKeyOpenAiSaveButto
         const apiKey = apiKeyOpenAiInput.value;
         
         if (!apiKey.length) {
-            errTarget.style.color = "rgb(164, 48, 48)";
+            errTarget.style.color = "#9c4b4a";
             errTarget.textContent = 'No input detected. OpenAI API key is a very long string starting with "sk-". \n Try with that one next time.';
             return;
         }
         
         if ((!apiKey.startsWith("sk-")) || (apiKey.length < 5)) {
-            errTarget.style.color = "rgb(164, 48, 48)";
+            errTarget.style.color = "#9c4b4a";
             errTarget.textContent = 'This is not an API Key :< . OpenAI API key is a very long string starting with "sk-". \n Try with that one next time.';
             return;
         }
