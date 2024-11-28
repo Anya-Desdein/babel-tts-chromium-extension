@@ -1,5 +1,5 @@
 function getImageURL(fileName) {
-    return chrome.runtime.getURL(`themes/${fileName}`);
+    return chrome.runtime.getURL(`images/themes/${fileName}`);
 }
 
 function isImage(fileName) {

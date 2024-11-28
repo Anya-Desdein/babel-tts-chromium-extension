@@ -374,12 +374,17 @@ select:-webkit-autofill:active {
 .hiddenTextContainerButton.missing {
     cursor: not-allowed;
     pointer-events: none;
+    opacity: 0.6;
 }
 
-[aria-label="Toggle visibility"] {
-    /* styles for the toggle button when it has the "Toggle visibility" aria-label */
-}
-  
-[aria-label="Toggle visibility"].visible {
-    /* styles for the toggle button when it has the "Toggle visibility" aria-label and the "open" class */
+.hiddenTextContainerButtonIcon {
+    display: inline-block;
+    height: 1em;
+    width: 1em;
+    vertical-align: middle;
+
+    background-image: var(--dynamic-icon-eye, url('images/icons/eye_closed.png'));
+    background-size: cover;
+    background-position: center; 
+    background-repeat: no-repeat;
 }

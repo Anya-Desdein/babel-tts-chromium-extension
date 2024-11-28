@@ -12,6 +12,8 @@ async function getFromLocalStorage(value) {
 }
 
 async function setToLocalStorage(key, value, errTarget=null) {
+    key = key.trim();
+    value = value.trim();
     await chrome.storage.local.set({ [key]: value });
     result = await getFromLocalStorage(key);
 

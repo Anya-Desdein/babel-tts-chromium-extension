@@ -14,7 +14,7 @@ function addListenerReroute(elementName, pageHref) {
 
 function resizeTextArea(textArea) {
   textArea.style.height = 'auto';
-  newHeight = textArea.scrollHeight + 2;
+  newHeight = textArea.scrollHeight + 3.5;
   textArea.style.height = newHeight + 'px';
 }
 
