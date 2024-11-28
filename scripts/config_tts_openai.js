@@ -6,7 +6,7 @@ function pickVoiceOpenAIListener() {
         let  pickVoice = document.getElementById('pickVoiceOpenAi').value;
         
         if (!pickVoice.length) {
-            pickVoiceStatusMessage.style.color = "rgb(164, 48, 48)";
+            pickVoiceStatusMessage.style.color = "#9c4b4a";
             pickVoiceStatusMessage.textContent = 'Something went wrong. No input detected.';
             return;
         }
@@ -16,7 +16,7 @@ function pickVoiceOpenAIListener() {
             return;
         }
 
-        pickVoiceStatusMessage.style.color = "rgb(164, 48, 48)";
+        pickVoiceStatusMessage.style.color = "#9c4b4a";
         pickVoiceStatusMessage.textContent = "Something went wrong. Incorrect input.";
     });
 }
@@ -32,7 +32,7 @@ function removeApiKeyOpenAIFromLocalStorageListener() {
             removeApiKeyStatusMessage.textContent = `Key Removed.`;
 
             const trickyAddApiKeyStatusMEssage = document.getElementById("changeApiKeyOpenAiStatusMessage");
-            trickyAddApiKeyStatusMEssage.style.color = "rgb(164, 48, 48)";
+            trickyAddApiKeyStatusMEssage.style.color = "#9c4b4a";;
             trickyAddApiKeyStatusMEssage.textContent = "No OpenAi Api Key, please add it here.";
             
             sendStateToBackgroundWorker("noApiKey");
@@ -40,15 +40,45 @@ function removeApiKeyOpenAIFromLocalStorageListener() {
     });
 }
 
-function previewApiKeyOpenAi(resultApiKeyOpenAI) {
+function previewApiKeyOpenAiOld(resultApiKeyOpenAI) {
     const ttsInputStatusMessageOpenAi = document.getElementById('changeApiKeyOpenAiStatusMessage');
     if (!resultApiKeyOpenAI) {
-        ttsInputStatusMessageOpenAi.style.color = "rgb(164, 48, 48)";
+        ttsInputStatusMessageOpenAi.style.color = "#9c4b4a";
         ttsInputStatusMessageOpenAi.textContent = "No OpenAi Api Key, please add it here.";
     } else {
         ttsInputStatusMessageOpenAi.style.color = " #d8cbc2";
         ttsInputStatusMessageOpenAi.textContent = `${resultApiKeyOpenAI}`;
     }
+}
+
+function previewApiKeyOpenAi(resultApiKeyOpenAI) {
+    const hiddenTextField = document.getElementById("hiddenTextContainerAreaApiKey");
+    const hiddenTextButton = document.getElementsByClassName("hiddenTextContainerButton")[0];
+    const hiddenTextButtonIcon = document.getElementsByClassName("hiddenTextContainerButtonIcon")[0];
+
+    if (!resultApiKeyOpenAI) {
+        hiddenTextField.value = "No OpenAi Api Key.";
+        resizeTextArea(hiddenTextField);
+        hiddenTextButton.classList.add('missing');
+    }
+
+    if (resultApiKeyOpenAI) { 
+        hiddenTextField.value = [...resultApiKeyOpenAI].map(char => "*").join('');
+        resizeTextArea(hiddenTextField);
+        hiddenTextButton.classList.remove("missing");
+    }
+
+    hiddenTextButton.addEventListener("click", function () {
+        hiddenTextField.classList.toggle("visible");
+
+        if (hiddenTextField.classList.contains("visible")) {
+            hiddenTextField.value = `${resultApiKeyOpenAI}`;
+            resizeTextArea(hiddenTextField);
+        } else {
+            hiddenTextField.value = [...resultApiKeyOpenAI].map(char => "*").join('');
+            resizeTextArea(hiddenTextField);
+        }
+    });
 }
 
 async function start() {
@@ -60,7 +90,9 @@ async function start() {
     addListenerReroute("returnHome", "home.html");
     addListenerReroute("configHome", "config_home.html");
 
-    addListenerForApiKeyOpenAi("changeApiKeyOpenAiInput", "changeApiKeyOpenAiSaveButton", null, "changeApiKeyOpenAiStatusMessage");
+    addListenerResizeTextArea("changeApiKeyOpenAiInput");
+
+    addListenerForApiKeyOpenAi("changeApiKeyOpenAiInput", "changeApiKeyOpenAiSaveButton", null, "hiddenTextApiKey");
     removeApiKeyOpenAIFromLocalStorageListener();
 
     pickVoiceOpenAIListener();

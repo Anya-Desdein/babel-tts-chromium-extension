@@ -25,9 +25,17 @@
         </div>
         <div>
             <p class="multiHeader">Change OpenAI API Key</p>
-            <input type="text" id="changeApiKeyOpenAiInput" placeholder="Enter new OpenAI API key" />
+            <textarea id="changeApiKeyOpenAiInput" placeholder="Enter new OpenAI API key"></textarea>
             <button id="changeApiKeyOpenAiSaveButton">Change</button>
             <p id="changeApiKeyOpenAiStatusMessage" class="errorMessage"></p>
+            
+            <p class="multiHeader">Preview Current Key</p>
+            <div class="hiddenTextContainer">
+                <textarea class="hiddenTextContainerArea" id="hiddenTextContainerAreaApiKey" readonly></textarea>
+                <button class="hiddenTextContainerButton" aria-label="Toggle visibility">
+                  Turn me on<span class="hiddenTextContainerButtonIcon"></span>
+                </button>
+            </div>              
         </div>
         <div>
             <p class="multiHeader">Remove OpenAI API Key</p>

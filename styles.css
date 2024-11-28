@@ -276,7 +276,7 @@ button, input[type="text"], input[type="password"], textarea, p {
 
 .errorMessage {
     font-size:  0.75rem;
-    color: rgb(164, 48, 48);
+    color: #9c4b4a;
     width: 92%;
     margin-left: auto;
     margin-right: auto;
@@ -339,4 +339,30 @@ select:-webkit-autofill:active {
 #ttsPlayerControls[data-disabled="false"] {
     opacity: 1;
     pointer-events: auto;
+}
+
+.hiddenTextContainerArea {
+    color: #9c4b4a;
+}
+
+.hiddenTextContainerArea.visible {
+    color: #978580;
+}
+
+.hiddenTextContainerButton {
+    cursor: auto;
+    pointer-events: auto;
+}
+
+.hiddenTextContainerButton.missing {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+[aria-label="Toggle visibility"] {
+    /* styles for the toggle button when it has the "Toggle visibility" aria-label */
+}
+  
+[aria-label="Toggle visibility"].visible {
+    /* styles for the toggle button when it has the "Toggle visibility" aria-label and the "open" class */
 }

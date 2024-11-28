@@ -12,12 +12,17 @@ function addListenerReroute(elementName, pageHref) {
   });
 }
 
-function addListenerResizeTextArea(textAreaId) {
-  const textarea = document.getElementById(textAreaId);
+function resizeTextArea(textArea) {
+  textArea.style.height = 'auto';
+  newHeight = textArea.scrollHeight + 2;
+  textArea.style.height = newHeight + 'px';
+}
 
-  textarea.addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = this.scrollHeight + 'px';
+function addListenerResizeTextArea(textAreaId) {
+  const textArea = document.getElementById(textAreaId);
+
+  textArea.addEventListener('input', function() {
+    resizeTextArea(textArea);
   });
 }
 
