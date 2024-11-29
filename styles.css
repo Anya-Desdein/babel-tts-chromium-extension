@@ -282,7 +282,6 @@ button, input[type="text"], input[type="password"], textarea, p {
     margin-right: auto;
 }
 
-/* Change Autocomplete styles*/
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus,
@@ -341,11 +340,16 @@ select:-webkit-autofill:active {
     pointer-events: auto;
 }
 
+.hiddenTextContainer {
+    margin-top: 0.3rem !important;
+}
+
 .hiddenTextContainerArea, 
 .hiddenTextContainerArea:focus {
+    margin-top: 0;
+
     color: #9c4b4a;
     border: 2px solid rgba(204, 204, 204, 0.1);
-
     cursor: auto;
     pointer-events: auto;
 
@@ -369,6 +373,13 @@ select:-webkit-autofill:active {
 .hiddenTextContainerButton {
     cursor: auto;
     pointer-events: auto;
+
+    width: 1em; 
+    height: 1em;
+    padding: 0;
+    margin-left: 0.3em;
+
+    margin-top: 0;
 }
 
 .hiddenTextContainerButton.missing {
@@ -387,4 +398,6 @@ select:-webkit-autofill:active {
     background-size: cover;
     background-position: center; 
     background-repeat: no-repeat;
+
+    border-radius: 0.15em;
 }
