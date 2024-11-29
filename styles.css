@@ -415,6 +415,19 @@ select:-webkit-autofill:active {
     margin-top: 0;
 }
 
+.hiddenTextContainerButton > .hiddenTextContainerButtonIcon{
+    opacity: 0.75;
+}
+
+.hiddenTextContainerButton:hover > .hiddenTextContainerButtonIcon{
+    opacity: 1;
+}
+
+.hiddenTextContainerButton:active > .hiddenTextContainerButtonIcon,
+.hiddenTextContainerButton:focus > .hiddenTextContainerButtonIcon{
+    opacity: 0.88;
+}
+
 .hiddenTextContainerButton.missing {
     cursor: not-allowed;
     pointer-events: none;
