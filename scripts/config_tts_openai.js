@@ -40,40 +40,45 @@ function removeApiKeyOpenAIFromLocalStorageListener() {
     });
 }
 
-function previewApiKeyOpenAi(resultApiKeyOpenAI) {
-    const hiddenTextField = document.getElementById("hiddenTextContainerAreaApiKey");
-    const hiddenTextButton = document.getElementById("hiddenTextContainerButtonApiKey");
-    const hiddenTextButtonIcon = document.getElementById("hiddenTextContainerButtonApiKey");
-
-    hiddenTextButtonIcon.style.setProperty('--dynamic-icon-eye', `url(${chrome.runtime.getURL('images/icons/eye_closed.png')})`);
-
+function setBaseStatePreviewApiKeyOpenAi(resultApiKeyOpenAI = null, hiddenTextField = null, hiddenTextButton = null) {
     if (!resultApiKeyOpenAI) {
         hiddenTextField.value = "No OpenAi Api Key.";
         resizeTextArea(hiddenTextField);
+
         hiddenTextButton.classList.add('missing');
         hiddenTextField.classList.add("missing");
+
+        const eyeIconPath = 'images/icons/eye_blind.png';
+        document.documentElement.style.setProperty('--dynamic-icon-eye', `url(${eyeIconPath})`);
+
+        return;
     }
 
-    if (resultApiKeyOpenAI) { 
-        hiddenTextField.value = '*'.repeat(resultApiKeyOpenAI.length);
-        resizeTextArea(hiddenTextField);
-        hiddenTextButton.classList.remove("missing");
-        hiddenTextField.classList.remove("missing");
-    }
+    hiddenTextField.value = '*'.repeat(resultApiKeyOpenAI.length);
+    resizeTextArea(hiddenTextField);
+    
+    hiddenTextButton.classList.remove("missing");
+    hiddenTextField.classList.remove("missing");
+    
+    const eyeIconPath = 'images/icons/eye_closed.png';
+    document.documentElement.style.setProperty('--dynamic-icon-eye', `url(${eyeIconPath})`);
+}
+
+function addListenerPreviewApiKeyOpenAi(resultApiKeyOpenAI) {
+    const hiddenTextField = document.getElementById("hiddenTextContainerAreaApiKey");
+    const hiddenTextButton = document.getElementById("hiddenTextContainerButtonApiKey");
+
+    setBaseStatePreviewApiKeyOpenAi(resultApiKeyOpenAI, hiddenTextField, hiddenTextButton);
 
     hiddenTextButton.addEventListener("click", async function () {
         hiddenTextField.classList.toggle("visible");
-        closedEyeIcon = await chrome.runtime.getURL("images/themes/images/icons/eye_closed.png");
-        openEyeIcon = await chrome.runtime.getURL("images/themes/images/icons/eye_open.png");
+        hiddenTextButton.classList.toggle("visible");
 
-        const toggleEyeIcon = hiddenTextButtonIcon.classList.contains("visible")
-            ? openEyeIcon
-            : closedEyeIcon;
+        const eyeIconPath = hiddenTextButton.classList.contains("visible")
+            ? 'images/icons/eye_open.png'
+            : 'images/icons/eye_closed.png';
 
-        // TODO: fix icon switch
-        const response = await fetch(toggleEyeIcon, { method: 'HEAD' });
-        console.log(response);
-        hiddenTextButtonIcon.style.setProperty('--dynamic-icon-eye', `url(${toggleEyeIcon})`);
+        document.documentElement.style.setProperty('--dynamic-icon-eye', `url(${eyeIconPath})`);
 
         if (hiddenTextField.classList.contains("visible")) {
             hiddenTextField.value = `${resultApiKeyOpenAI}`;
@@ -89,7 +94,7 @@ async function start() {
     setWallpaperFromChromeLocalStorage();
 
     resultApiKeyOpenAI = await getFromLocalStorage('babel_tts_openai_apikey');
-    previewApiKeyOpenAi(resultApiKeyOpenAI);
+    addListenerPreviewApiKeyOpenAi(resultApiKeyOpenAI);
 
     addListenerReroute("returnHome", "home.html");
     addListenerReroute("configHome", "config_home.html");
