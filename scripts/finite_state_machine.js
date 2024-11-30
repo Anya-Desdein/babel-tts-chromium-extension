@@ -1,33 +1,40 @@
-function changeStateText(state, elementName) {
+function changeStateText(state, elementName, errMessage="OOPSIE wOOPSIE! UwU We made a fucky wucky!") {
   element = document.getElementById(elementName);
 
-  if (state == "no") {
+  if (state == "noProcessing") {
     element.textContent = "";   
     return;
   }
 
-  if (state == "processing") {
+  if (state == "processingInProgress") {
     element.textContent = "Processing in Progress.";   
     return;
   }
+
+  /*
+  if (state == "finishedProcessing") {
+    element.textContent = "";   
+    return;
+  }
+  */
 
   if (state == "noApiKey") {
     element.textContent = "No or invalid OpenAi Api Key, please add it before generating";
     return;
   }
 
-  element.textContent = "";
+  if (state == "requestErr") {
+    element.textContent = `Error: ${errMessage}`;
+    return;
+  }
+
+  element.textContent = "";   
 }
 
 function changeStateButton(state, elementName) {
   element = document.getElementById(elementName);
 
-  if (state == "no") {
-    element.disabled = false;
-    return;
-  }
-
-  if (state == "processing" || state == "noApiKey") {
+  if (state == "processingInProgress" || state == "finishedProcessing" || state == "noApiKey" || state == "noApiKey") {
     element.disabled = true;    
     return;
   }
@@ -38,7 +45,7 @@ function changeStateButton(state, elementName) {
 function changeStateHiddenButton(state, elementName) {
   element = document.getElementById(elementName);
 
-  if (state == "no") {
+  if (state == "noProcessing") {
     element.disabled = false;
     element.style.visibility = 'hidden'; 
     return;

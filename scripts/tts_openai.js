@@ -84,7 +84,7 @@ async function start() {
     setWallpaperFromChromeLocalStorage();
     resultApiKeyOpenAI = await getFromLocalStorage('babel_tts_openai_apikey');
     if (!resultApiKeyOpenAI) {
-        // sendStateToBackgroundWorker("noApiKey", 'ttsOutputSaveButtonOpenAi', "ttsPlayerControls", "ttsInputSaveButtonOpenAi", "ttsInputStatusMessageOpenAi");
+        sendStateToBackgroundWorker("noApiKey", 'ttsOutputSaveButtonOpenAi', "ttsPlayerControls", "ttsInputSaveButtonOpenAi", "ttsInputStatusMessageOpenAi");
     }
 
     resultVoice = await getFromLocalStorage('babel_tts_openai_voice_name');

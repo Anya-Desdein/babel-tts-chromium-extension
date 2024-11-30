@@ -20,8 +20,17 @@
                 <option value="nova">Nova</option>
                 <option value="shimmer">Shimmer</option>
             </select>
-            <button id="pickVoiceOpenAiSaveButton">Pick Voice</button>
+            <button id="pickVoiceOpenAiSaveButton">Save</button>
             <p id="pickVoiceOpenAiStatusMessage" class="errorMessage"></p>
+        </div>
+        <div>
+            <p class="multiHeader">Choose TTS model:</p>
+            <select id="pickModelOpenAi" name="options">
+                <option value="tts-1">tts-1</option>
+                <option value="tts-1-hd">tts-1-hd</option>
+            </select>
+            <button id="pickModelOpenAiSaveButton">Save</button>
+            <p id="pickModelOpenAiStatusMessage" class="errorMessage"></p>
         </div>
         <div>
             <p class="multiHeader">Change OpenAI API Key</p>

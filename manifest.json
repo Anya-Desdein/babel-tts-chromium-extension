@@ -30,7 +30,9 @@
       "images/icons/*.jpg",
       "images/icons/*.png",
       "images/icons/*.gif",
-      "images/icons/*.svg"
+      "images/icons/*.svg",
+
+      "dupa.mp3"
     ],
     "matches": ["<all_urls>"]
   }]

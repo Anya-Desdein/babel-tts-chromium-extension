@@ -21,6 +21,29 @@ function pickVoiceOpenAIListener() {
     });
 }
 
+function pickModelOpenAiListener() {
+    const pickVoiceSaveButton = document.getElementById('pickModelOpenAiSaveButton');
+    const pickVoiceStatusMessage = document.getElementById('pickModelOpenAiStatusMessage');
+
+    pickVoiceSaveButton.addEventListener('click', async function() {
+        let  pickVoice = document.getElementById('pickModelOpenAi').value;
+        
+        if (!pickVoice.length) {
+            pickVoiceStatusMessage.style.color = "#9c4b4a";
+            pickVoiceStatusMessage.textContent = 'Something went wrong. No input detected.';
+            return;
+        }
+        
+        if (pickVoice == "tts-1" || pickVoice == "tts-1-hd") {
+            await setToLocalStorage("babel_tts_openai_voice_name", pickVoice, pickVoiceStatusMessage);
+            return;
+        }
+
+        pickVoiceStatusMessage.style.color = "#9c4b4a";
+        pickVoiceStatusMessage.textContent = "Something went wrong. Incorrect input.";
+    });
+}
+
 function removeApiKeyOpenAIFromLocalStorageListener() {
     const removeApiKeyButton = document.getElementById('removeApiKeyOpenAiSaveButton');
     const removeApiKeyStatusMessage = document.getElementById('removeApiKeyOpenAiStatusMessage');

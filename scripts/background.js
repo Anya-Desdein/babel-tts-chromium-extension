@@ -1,100 +1,13 @@
-class Mp3BlobElement {
-  constructor(serializedBlob = '', isUsed = false, name = '', number = 0) {
-    this.serializedBlob = serializedBlob;
-    this.isUsed = isUsed; 
-    this.name = name; 
-    this.number = number;
-  }
-
-  async setSerializedBlob(blob) {
-    if (!blob) {
-      return;
-    }
-
-    const dataArrayBuffer = await blob.arrayBuffer();
-    const dataUint8Array = new Uint8Array(dataArrayBuffer);
-    const dataArray = Array.from(dataUint8Array);
-
-    this.serializedBlob = dataArray;
-  } 
-  copyFrom(other) {
-    if (!(other instanceof Mp3BlobElement)) {
-      return;
-    }
-
-    this.serializedBlob = other.serializedBlob;
-    this.isUsed = other.isUsed;
-    this.name = other.name;
-    this.number = other.number;
-  }
-  setUsage(isCurrentlyUsed) {
-    if (!isCurrentlyUsed) {
-      return;
-    }
-
-    this.isUsed = isCurrentlyUsed;
-  } 
-  setName(name) {
-    if (!name) {
-      return;
-    }
-
-    this.name = name;
-  } 
-  setNumber(number) {
-    if (!number) {
-      return;
-    }
-
-    if (number > 3 || number < 0) {
-      return;
-    }
-
-    this.number = number;
-  }
-}
+import * as blobShared from './blob_shared.js';
+import * as modifyChromeLocalVariables from './modify_chrome_local_variables.js';
 
 // 3 generations are stored max at once. 
 // If all slots are already taken, the one replaced will be the one that isn't being played, one with the lowest number (oldest). 
-// If none slots are already taken, the one used will be the one with the lowest number. 
-const firstMp3BlobElement = new Mp3BlobElement();
-const secondMp3BlobElement = new Mp3BlobElement();
-const thirdtMp3BlobElement = new Mp3BlobElement();
+// Else, the one used will be the one with the lowest number. 
+const firstMp3BlobElement = new blobShared.Mp3BlobElement();
+const secondMp3BlobElement = new blobShared.Mp3BlobElement();
+const thirdtMp3BlobElement = new blobShared.Mp3BlobElement();
 const mp3BlobElementList = [firstMp3BlobElement, secondMp3BlobElement, thirdtMp3BlobElement];
-
-async function replaceMp3BlobElement(blob) {     
-  const newMp3BlobElement = new Mp3BlobElement();
-  // Due to serialization of sendMessage responses, blob has to be converted to array and then reverted
-  newMp3BlobElement.setSerializedBlob(blob);
-
-  const elementNumber = findSlotForNewMp3BlobElement(mp3BlobElementList, newMp3BlobElement);
-  if (!elementNumber) {
-    return;
-  }
-
-  sendMessageNewMp3BlobElementAvailable(state="newFileAvailable", newMp3BlobElement);
-}
-
-function findSlotForNewMp3BlobElement(mp3BlobElementList, newMp3BlobElement) {
-  const len = mp3BlobElementList.length;
-  for (let i = 0; i < len; i++) {
-    if (!mp3BlobElementList[i].serializedBlob) {
-      mp3BlobElementList[i].copyFrom(newMp3BlobElement);
-      mp3BlobElementList[i].setName(ttsFilename);
-      mp3BlobElementList[i].setNumber(i);
-      return i;
-    }
-  }
-
-  for (let i = 0; i < len; i++) {
-    if (!mp3BlobElementList[i].isUsed) {
-      mp3BlobElementList[i].copyFrom(newMp3BlobElement);
-      mp3BlobElementList[i].setName(ttsFilename);
-      mp3BlobElementList[i].setNumber(i);
-      return i;
-    }
-  }
-}
 
 // Another available model is tts-1-hd
 async function sendTtsReqOpenAi(text, apiKey, voiceName="onyx" , modelName="tts-1") {
@@ -113,28 +26,26 @@ async function sendTtsReqOpenAi(text, apiKey, voiceName="onyx" , modelName="tts-
   return response;
 }
 
-async function analyzeTtsResponseOpenAi(text, apiKey, voiceName, modelName="tts-1") {
-  /*
-  console.log("text: ", text);
-  console.log("apiKey: ", apiKey);
-  console.log("voiceName: ", voiceName); 
-  */
+async function analyzeTtsResponseOpenAi(text, apiKey, voiceName="onyx", modelName="tts-1") {
     try {
       const response = await sendTtsReqOpenAi(text, apiKey, voiceName, modelName);
     if (!response.ok) {
-      processingState = "noApiKey";
-      throw new Error(`Invalid Response. Response: ${response} Status Ok: ${response.ok}`);
+      console.log(`Invalid Response. Response: ${response} Status Ok: ${response.ok}`);
+      return "err";
     } else {
-      await replaceMp3BlobElement(await response.blob());
-       processingState = 'yes';
+      const blobNumber = await blobShared.replaceMp3BlobElement(await response.blob());
+      if (!blobNumber) {
+        return "err";
+      }
+      sendMessageNewMp3BlobAvailable(state="newFileAvailable", mp3BlobElementList[blobNumber]);
+      return "finishedProcessing";
     }
   } catch (error) {
-      processingState = "no";
-      console.error("Error generating TTS:", error);
+      return "err";
   }
 }
 
-function sendMessageNewMp3BlobElementAvailable(stateReq, mp3BlobElementToSend) {
+function sendMessageNewMp3BlobAvailable(stateReq, mp3BlobElementToSend) {
   response = {
     state: stateReq,
     serializedBlob: mp3BlobElementToSend.serializedBlob, 
@@ -142,7 +53,7 @@ function sendMessageNewMp3BlobElementAvailable(stateReq, mp3BlobElementToSend) {
     name: mp3BlobElementToSend.name, 
     number: mp3BlobElementToSend.number
   }
-  chrome.runtime.sendMessage({ action: 'babel_tts_change_key_state_tts_openai', value: response});
+  chrome.runtime.sendMessage({ action: 'babel_tts_new_mp3_blob_available', value: response});
 }
 
 function createDynamicFilename(text) {
@@ -185,66 +96,50 @@ function createDynamicFilename(text) {
   return modified_text;
 }
 
-/*
-function checkIfTtsProcessing() {
-  if (processingState == "noApiKey" || processingState == "no" || processingState == "yes") {
-    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: processingState });
-    return;
+function checkForProcessingRequest(fnProcessingState) {
+  if (fnProcessingState == "requestProcessing") {
+    fnProcessingState = "processingInProgress";
+    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: fnProcessingState });
+    return fnProcessingState;
   }
 
-  if (processingState == "processing1") {
-    processingState = "processing2";
-
-    chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: "processing" });
-
-    if (previousTtsInput == currentTtsInput) {
-      processingState = 'yes';
-      return;
-    }
-
-    ttsFilename = createDynamicFilename(currentTtsInput);
-
-    previousTtsInput = currentTtsInput;
-    analyzeTtsResponseOpenAi(currentTtsInput, msgApiKey, msgVoiceName);
-    return;
-  }
+  chrome.runtime.sendMessage({ action: 'babel_tts_start_generating_file_tts_openai', value: fnProcessingState });
 }
-*/
 
-let previousTtsInput = '';
-let currentTtsInput = '';
-
-let msgApiKey = '';
-let msgVoiceName = '';
-
-let ttsFilename = '';
-let generatedFileBlob = null;
-let convertedData = null;
-let processingState = 'no';
-
-// const allowedProcessingStates = ['processing1', 'processing2', 'yes', 'no', 'noApiKey'];
-
+let processingState = 'noProcessing';
 /*  TODO 1: Add icons, fonts, animations on save
     TODO 2: Integrate with google cloud for text-to-text translation
+    TODO 3: Play in browser from offscreen
+    TODO 4: Other play elements from offscreen
 */
 
-/* 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  processingState = "requestProcessing";
   if (!(request.action === 'babel_tts_save_text_input_tts_openai')){
     return;
   }
 
-  if (!request.value.msgTtsText || !request.value.msgApiKey || !request.value.msgVoiceName) {
+  if (!request.value.msgTtsText) {
     sendResponse({ status: `missing content in ${JSON.stringify(request)}` });
     return;
   }
-  
-  sendResponse({ status: 'success' });
 
-  processingState = "processing1";
-  currentTtsInput = request.value.msgTtsText;
-  msgApiKey = request.value.msgApiKey;
-  msgVoiceName = request.value.msgVoiceName;
+  processingState = checkForProcessingRequest(processingState);
+  if (processingState != "processingInProgress") {
+    return;
+  }
+
+  if (processingState = "processingInProgress") {
+    sendResponse({ status: 'success' });
+    const currentTtsInput = request.value.msgTtsText;
+    filename = createDynamicFilename(currentTtsInput);
+
+    const apiKey = modifyChromeLocalVariables.getFromLocalStorage("babel_tts_openai_apikey");
+    const voiceName = modifyChromeLocalVariables.getFromLocalStorage("babel_tts_openai_voice_name");
+    const modelName = "tts-1";
+
+    processingState = analyzeTtsResponseOpenAi(currentTtsInput, apiKey, voiceName, modelName);
+  }
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -252,10 +147,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return;
   }
 
+  // now has to return also requested el number
+
   if (!firstMp3BlobElement.serializedBlob) {
     return;
   }
-
   
   console.log(firstMp3BlobElement.serializedBlob);
   console.log(firstMp3BlobElement.name);
@@ -272,22 +168,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return;
   }
 
-  if (request.value == "processing") {
-    processingState = "processing1";
-    sendResponse({response: "ok"});
-    return;
-  }
-
   processingState = request.value;
   sendResponse({response: "ok"});
 });
-*/
 
+const interval = 1000;
+setInterval(checkForProcessingRequest, interval);
 
 async function initOffscreenDocument() {
   const hasOffscreen = await chrome.offscreen.hasDocument();
   if (hasOffscreen) {
-    console.log("Offscreen document already exists.");
     return;
   }
   
@@ -296,11 +186,8 @@ async function initOffscreenDocument() {
     reasons: ["AUDIO_PLAYBACK"],
     justification: "Required for audio processing."
   });
-  console.log("Offscreen document created."); 
+  console.log("New offscreen document created."); 
 }
-
-const interval = 2000;
-setInterval(checkIfTtsProcessing, interval);
 
 chrome.runtime.onInstalled.addListener(() => {
   initOffscreenDocument();
