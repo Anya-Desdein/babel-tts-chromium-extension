@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BABEL TTS</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="multiButton wideButtonArea">
+        <button id="btnHome">home</button>
+        <button id="btnConfig">COG</button>
+    </nav>
+    <section id="mainSection">
+        <form id="mainForm">
+            <h3>OpenAI Text to Speech</h3>
+            <textarea name="text" placeholder="Enter text here"></textarea>
+            <button>Generate Speech</button>
+            <p class="errorMessage"></p>
+        </form>
+        <div class="multiButton wideButtonArea">
+            <button id="ttsOutputSaveButtonOpenAi" style="visibility: hidden;">Download .Mp3</button>
+        </div>
+    </section>
+    <section id="configSection">
+        <div>
+            <h3>Config List:</h3>
+            <div class="multiButton">
+                <button id="btnAppearance">Appearance</button>
+                <button id="btnOpenAI">TTS OpenAI</button>
+            </div>
+        </div>
+    </section>
+    <section id="configApperanceSection">
+        <div id="pickWallpaperContainer">
+            <p class="multiHeader">Choose your theme:</p>
+            <select id="inputWallpaper" name="options">
+                <option value="none">No Image</option>
+            </select>
+        </div>
+    </section>
+    <section id="configOpenAISection">
+        <p class="multiHeader">Choose TTS voice:</p>
+        <select id="inputOpenAIVoice" name="options">
+            <option value="alloy">Alloy</option>
+            <option value="echo">Echo</option>
+            <option value="fable">Fable</option>
+            <option value="onyx">Onyx</option>
+            <option value="nova">Nova</option>
+            <option value="shimmer">Shimmer</option>
+        </select>
+
+        <p class="multiHeader">Choose TTS model:</p>
+        <select id="inputOpenAIModel" name="options">
+            <option value="tts-1">tts-1</option>
+            <option value="tts-1-hd">tts-1-hd</option>
+        </select>
+
+        <p class="multiHeader">Change OpenAI API Key</p>
+        <textarea id="inputOpenAIAPIKey" placeholder="Enter new OpenAI API key"></textarea>
+
+        <p class="multiHeader">Preview Current Key
+            <button class="hiddenTextContainerButton" id="hiddenTextContainerButtonApiKey">
+                <span class="hiddenTextContainerButtonIcon" id="hiddenTextContainerButtonIconApiKey"></span>
+            </button>
+        </p>
+
+        <div class="hiddenTextContainer">
+            <textarea class="hiddenTextContainerArea" id="hiddenTextContainerAreaApiKey" readonly></textarea>
+        </div>
+        <div>
+            <p class="multiHeader">Remove OpenAI API Key</p>
+            <button id="removeApiKeyOpenAiSaveButton">Remove</button>
+            <p id="removeApiKeyOpenAiStatusMessage" class="errorMessage"></p>
+        </div>
+    </section>
+
+    <script type="module" src="index.js"></script>
+</body>
+</html>

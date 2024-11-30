@@ -14,10 +14,10 @@
     "offscreen"
   ],
   "action": {
-    "default_popup": "home.html"
+    "default_popup": "popup/index.html"
   },
   "background": {
-    "service_worker": "./scripts/background.js",
+    "service_worker": "./background/background.js",
     "type": "module"
   },
   "web_accessible_resources": [{
@@ -26,7 +26,7 @@
       "images/themes/*.png",
       "images/themes/*.gif",
       "images/themes/*.svg",
-      
+
       "images/icons/*.jpg",
       "images/icons/*.png",
       "images/icons/*.gif",
